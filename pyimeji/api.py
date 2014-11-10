@@ -1,0 +1,2 @@
+class Imeji(object):
+    pass
