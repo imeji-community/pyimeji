@@ -48,5 +48,5 @@ setup(
             "imeji = pyimeji.cli:main"
         ]
     },
-    tests_require=['nose'],
+    tests_require=['nose', 'coverage', 'httmock'],
 )

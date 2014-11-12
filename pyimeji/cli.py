@@ -19,6 +19,7 @@ from __future__ import unicode_literals, print_function
 from docopt import docopt
 
 from pyimeji.config import Config
+from pyimeji.api import Imeji
 
 
 __version__ = "0.1.0"
@@ -30,7 +31,8 @@ def main():
     '''Main entry point for the imeji CLI.'''
     cfg = Config()
     args = docopt(__doc__, version=__version__)
-    print(args)
+    api = Imeji(cfg)
+
 
 if __name__ == '__main__':
     main()
