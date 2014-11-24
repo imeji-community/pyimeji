@@ -9,6 +9,7 @@ requires = [
     'docopt',
     'requests',
     'AppDirs',
+    'python-dateutil',
 ]
 
 
