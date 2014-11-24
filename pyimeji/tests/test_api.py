@@ -117,7 +117,7 @@ class ApiTest(TestCase):
         with HTTMock(imeji):
             collections = self.api.collections()
             self.assertIn('FKMxUpYdV9N2J4XG', collections)
-            collection = self.api.collection(collections.keys()[0])
+            collection = self.api.collection(list(collections.keys())[0])
             self.assertEqual(collection.title, 'Research Data')
             collection.title = 'New title'
             self.assertEqual(collection.title, 'New title')
