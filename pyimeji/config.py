@@ -18,7 +18,11 @@ class Config(RawConfigParser):
             self.read(cfg_path)
         else:
             if not os.path.exists(config_dir):
-                os.mkdir(config_dir)
-            with open(cfg_path, 'w') as fp:
-                self.write(fp)
-
+                try:
+                    os.mkdir(config_dir)
+                except OSError:  # pragma: no cover
+                    # this happens when run on travis-ci, by a system user.
+                    pass
+            if os.path.exists(config_dir):
+                with open(cfg_path, 'w') as fp:
+                    self.write(fp)
