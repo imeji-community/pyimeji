@@ -17,11 +17,20 @@ class Resource(object):
         "modifiedDate": "2014-11-19T14:50:218 +0100",
     """
     __readonly__ = ['id', 'createdBy', 'modifiedBy', 'createdDate', 'modifiedDate']
+    __subresources__ = []
 
-    def __init__(self, d):
+    def __init__(self, d, api):
+        self._api = api
         self._json = d
 
+    def _path(self):
+        return '/%ss/%s' % (self.__class__.__name__.lower(), self.id)
+
     def __getattr__(self, attr):
+        if attr in self.__subresources__:
+            json = True if not isinstance(self.__subresources__, dict) \
+                else self.__subresources__[attr]
+            return self._api._req(self._path() + '/' + attr, json=json)
         try:
             res = self._json[attr]
         except KeyError:
@@ -43,8 +52,11 @@ class Resource(object):
             raise AttributeError('%s is readonly' % attr)
         self._json[attr] = value
 
-    def dumps(self):
-        return json.dumps(self._json)
+    def dumps(self, **kw):
+        return json.dumps(self._json, **kw)
+
+    def __repr__(self):
+        return self.dumps(sort_keys=True, indent=4, separators=(',', ': '))
 
 
 class Collection(Resource):
@@ -52,4 +64,4 @@ class Collection(Resource):
 
 
 class Item(Resource):
-    pass
+    __subresources__ = {'content': False}

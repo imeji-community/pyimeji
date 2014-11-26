@@ -3,19 +3,11 @@ import requests
 from pyimeji import resource
 
 
-RESOURCES = {
-    'collection': [],
-    'item': [],
-    'profile': [],
-}
-
-
 class GET(object):
     """handles GET requests"""
     def __init__(self, api, name):
         self._list = name.endswith('s')
-        self.rsc = name[:-1] if self._list else name
-        assert self.rsc in RESOURCES
+        self.rsc = getattr(resource, (name[:-1] if self._list else name).capitalize())
         self.api = api
         self.name = name
         self.path = name
@@ -27,7 +19,7 @@ class GET(object):
             raise ValueError('no id given')
         res = self.api._req('/%s/%s' % (self.path, id))
         if not self._list:
-            res = getattr(resource, self.rsc.capitalize())(res)
+            res = self.rsc(res, self.api)
         return res
 
 
@@ -36,9 +28,12 @@ class Imeji(object):
         self.cfg = cfg
         self.service_url = service_url
 
-    def _req(self, path, method='get'):
+    def _req(self, path, method='get', json=True):
         method = getattr(requests, method)
-        return method(self.service_url + '/rest' + path).json()
+        res = method(self.service_url + '/rest' + path)
+        if json:
+            res = res.json()
+        return res
 
     def __getattr__(self, name):
         return GET(self, name)

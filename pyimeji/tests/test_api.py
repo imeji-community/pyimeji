@@ -113,6 +113,7 @@ RESPONSES = [
             }
         ]
     }),
+    Response(('/rest/items/Wo1JI_oZNyrfxV_t/content', 'get'), 200, b'test'),
     Response(('/rest/collections/', 'get'), 200, {"FKMxUpYdV9N2J4XG": {}}),
     Response(('/rest/collections/FKMxUpYdV9N2J4XG', 'get'), 200, {
         "id": "FKMxUpYdV9N2J4XG",
@@ -234,3 +235,14 @@ class ApiTest(TestCase):
             self.assertRaises(ValueError, self.api.item)
             self.assertRaises(AttributeError, getattr, item, 'abc')
             self.assertRaises(AttributeError, setattr, item, 'id', 'abc')
+            self.assertEqual(item.content.text, 'test')
+
+    def test_cli(self):
+        from pyimeji.cli import main
+        from pyimeji.resource import Collection
+
+        with HTTMock(imeji):
+            res = main(
+                ('--service=%s retrieve collection FKMxUpYdV9N2J4XG' % SERVICE_URL)\
+                .split())
+            self.assertIsInstance(res, Collection)
