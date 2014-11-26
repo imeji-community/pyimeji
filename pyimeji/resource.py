@@ -45,3 +45,11 @@ class Resource(object):
 
     def dumps(self):
         return json.dumps(self._json)
+
+
+class Collection(Resource):
+    pass
+
+
+class Item(Resource):
+    pass
