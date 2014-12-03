@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from unittest import TestCase
 from collections import namedtuple
+from datetime import datetime
 
 from httmock import all_requests, response, HTTMock
 
@@ -11,7 +12,7 @@ SERVICE_URL = 'http://example.org'
 Response = namedtuple('Response', 'key status content')
 
 RESPONSES = [
-    Response(('/rest/items/', 'get'), 200, {"Wo1JI_oZNyrfxV_t": {}}),
+    Response(('/rest/items', 'get'), 200, {"Wo1JI_oZNyrfxV_t": {}}),
     Response(('/rest/items/Wo1JI_oZNyrfxV_t', 'get'), 200, {
         "id": "Wo1JI_oZNyrfxV_t",
         "createdBy": {
@@ -22,9 +23,9 @@ RESPONSES = [
             "fullname": "Saquet",
             "id": "zhcQKsMR0A9SiC6x"
         },
-        "createdDate": "2014-10-16T11:01:137\t +0200",
-        "modifiedDate": "2014-11-20T10:31:155\t +0100",
-        "versionDate": "2014-10-16T11:15:978\t +0200",
+        "createdDate": "2014-10-16T11:01:13 +0200",
+        "modifiedDate": "2014-11-20T10:31:15 +0100",
+        "versionDate": "2014-10-16T11:15:97 +0200",
         "status": "RELEASED",
         "version": 1,
         "discardComment": "",
@@ -114,7 +115,7 @@ RESPONSES = [
         ]
     }),
     Response(('/rest/items/Wo1JI_oZNyrfxV_t/content', 'get'), 200, b'test'),
-    Response(('/rest/collections/', 'get'), 200, {"FKMxUpYdV9N2J4XG": {}}),
+    Response(('/rest/collections', 'get'), 200, {"FKMxUpYdV9N2J4XG": {}}),
     Response(('/rest/collections/FKMxUpYdV9N2J4XG', 'get'), 200, {
         "id": "FKMxUpYdV9N2J4XG",
         "createdBy": {
@@ -125,9 +126,9 @@ RESPONSES = [
             "fullname": "admin",
             "id": "w7ZfmmC5LQR8KJIN"
         },
-        "createdDate": "2014-10-09T13:01:254 +0200",
-        "modifiedDate": "2014-11-19T14:50:218 +0100",
-        "versionDate": "2014-10-16T11:15:960 +0200",
+        "createdDate": "2014-10-09T13:01:25 +0200",
+        "modifiedDate": "2014-11-19T14:50:21 +0100",
+        "versionDate": "2014-10-16T11:15:44 +0200",
         "status": "RELEASED",
         "version": 1,
         "discardComment": "",
@@ -201,6 +202,8 @@ RESPONSES = [
     })
 ]
 RESPONSES = {r.key: r for r in RESPONSES}
+RESPONSES[('/rest/collections', 'post')] = RESPONSES[('/rest/collections/FKMxUpYdV9N2J4XG', 'get')]
+RESPONSES[('/rest/items', 'post')] = RESPONSES[('/rest/items/Wo1JI_oZNyrfxV_t', 'get')]
 
 
 @all_requests
@@ -223,8 +226,12 @@ class ApiTest(TestCase):
             collection = self.api.collection(list(collections.keys())[0])
             self.assertEqual(collection.title, 'Research Data')
             collection.title = 'New title'
+            self.assertIsInstance(collection.createdDate, datetime)
             self.assertEqual(collection.title, 'New title')
             collection.dumps()
+            repr(collection)
+            collection2 = self.api.create('collection', title='abc')
+            assert collection2
 
     def test_item(self):
         with HTTMock(imeji):
@@ -236,6 +243,8 @@ class ApiTest(TestCase):
             self.assertRaises(AttributeError, getattr, item, 'abc')
             self.assertRaises(AttributeError, setattr, item, 'id', 'abc')
             self.assertEqual(item.content.text, 'test')
+            item2 = self.api.create('item', collectionId='abc')
+            assert item2
 
     def test_cli(self):
         from pyimeji.cli import main
