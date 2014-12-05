@@ -3,6 +3,6 @@ pyimeji
 
 python wrapper for the imeji API
 
-[![Build Status](https://travis-ci.org/clld/pyimeji.png)](https://travis-ci.org/clld/pyimeji)
-[![Coverage Status](https://img.shields.io/coveralls/clld/pyimeji.svg)](https://coveralls.io/r/clld/pyimeji?branch=master)
+[![Build Status](https://travis-ci.org/imeji-community/pyimeji.png)](https://travis-ci.org/imeji-community/pyimeji)
+[![Coverage Status](https://img.shields.io/coveralls/imeji-community/pyimeji.svg)](https://coveralls.io/r/imeji-community/pyimeji?branch=master)
 
