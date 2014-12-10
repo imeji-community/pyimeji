@@ -5,18 +5,6 @@ from dateutil.parser import parse
 
 
 class Resource(object):
-    """
-        "createdBy": {
-            "fullname": "Saquet",
-            "id": "zhcQKsMR0A9SiC6x"
-        },
-        "modifiedBy": {
-            "fullname": "admin",
-            "id": "w7ZfmmC5LQR8KJIN"
-        },
-        "createdDate": "2014-10-09T13:01:25 +0200",
-        "modifiedDate": "2014-11-19T14:50:21 +0100",
-    """
     __readonly__ = ['id', 'createdBy', 'modifiedBy', 'createdDate', 'modifiedDate']
     __subresources__ = []
 
@@ -91,6 +79,10 @@ class Collection(Resource):
         return self._api.create('item', collectionId=self.id, **kw)
 
 
+class Profile(Resource):
+    pass
+
+
 class Item(Resource):
     __subresources__ = {'content': False}
 
@@ -104,6 +96,7 @@ class Item(Resource):
         if self._json.get('id'):
             raise NotImplemented()  # pragma: no cover
             #return Resource.save(self)
+        # FIXME: verify md5 sum upon creation of item from local file!
         return self.__class__(
             self._api._req(
                 self._path(),
