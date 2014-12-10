@@ -52,8 +52,9 @@ class Imeji(object):
     >>> api = Imeji(service_url='http://demo.imeji.org/imeji/')
     >>> collection_id = list(api.collections().keys())[0]
     >>> collection = api.collection(collection_id)
-    >>> new = api.create('collection', title='the new collection')
-    >>> item = api.create('item', collectionId=new.id, fetchUrl='http://example.org')
+    >>> collection = api.create('collection', title='the new collection')
+    >>> item = collection.add_item(fetchUrl='http://example.org')
+    >>> item.delete()
     """
     def __init__(self, cfg=None, service_url=None):
         self.cfg = cfg or Config()
@@ -64,9 +65,11 @@ class Imeji(object):
         if user and password:
             self.session.auth = (user, password)
 
-    def _req(self, path, method='get', json=True, **kw):
+    def _req(self, path, method='get', json=True, assert_status=200, **kw):
         method = getattr(self.session, method.lower())
         res = method(self.service_url + '/rest' + path, **kw)
+        if assert_status:
+            assert res.status_code == assert_status
         if json:
             try:
                 res = res.json()
@@ -82,3 +85,6 @@ class Imeji(object):
             cls = getattr(resource, rsc.capitalize())
             rsc = cls(kw, self)
         return rsc.save()
+
+    def delete(self, rsc):
+        return rsc.delete()

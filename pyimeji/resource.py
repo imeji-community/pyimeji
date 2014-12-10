@@ -1,3 +1,4 @@
+import os
 import json
 
 from dateutil.parser import parse
@@ -71,27 +72,44 @@ class Resource(object):
         return self.dumps(sort_keys=True, indent=4, separators=(',', ': '))
 
     def save(self):
-        method = 'put' if self._json.get('id') else 'post'
-        return self._api._req(
-            self._path(),
-            method=method,
+        kw = dict(
+            method='put' if self._json.get('id') else 'post',
             data=self.dumps(),
             headers={'content-type': 'application/json'})
+        if kw['method'] == 'post':
+            kw['assert_status'] = 201
+        return self.__class__(self._api._req(self._path(), **kw), self._api)
+
+    def delete(self):
+        return self._api._req(self._path(), method='delete')
 
 
 class Collection(Resource):
     __subresources__ = ['mdprofiles']
 
+    def add_item(self, **kw):
+        return self._api.create('item', collectionId=self.id, **kw)
+
 
 class Item(Resource):
     __subresources__ = {'content': False}
 
+    def __init__(self, d, api):
+        self._file = d.pop('file', None)
+        if self._file:
+            assert os.path.exists(self._file)
+        Resource.__init__(self, d, api)
+
     def save(self):
         if self._json.get('id'):
-            raise NotImplemented()  # pragme: no cover
+            raise NotImplemented()  # pragma: no cover
             #return Resource.save(self)
-        return self._api._req(
-            self._path(),
-            method='post',
-            json=False,
-            files=dict(file='', json=self.dumps()))
+        return self.__class__(
+            self._api._req(
+                self._path(),
+                method='post',
+                assert_status=201,
+                files=dict(
+                    file=open(self._file, 'rb') if self._file else '',
+                    json=self.dumps())),
+            self._api)
