@@ -9,10 +9,17 @@ from httmock import all_requests, response, HTTMock
 
 SERVICE_URL = 'http://example.org'
 
-Response = namedtuple('Response', 'key status content')
+
+class Response(object):
+    def __init__(self, key, status, content):
+        self.key = key
+        self.status = status
+        self.content = content
+
 
 RESPONSES = [
     Response(('/rest/items', 'get'), 200, {"Wo1JI_oZNyrfxV_t": {}}),
+    Response(('/rest/items/Wo1JI_oZNyrfxV_t', 'delete'), 200, {}),
     Response(('/rest/items/Wo1JI_oZNyrfxV_t', 'get'), 200, {
         "id": "Wo1JI_oZNyrfxV_t",
         "createdBy": {
@@ -202,8 +209,15 @@ RESPONSES = [
     })
 ]
 RESPONSES = {r.key: r for r in RESPONSES}
-RESPONSES[('/rest/collections', 'post')] = RESPONSES[('/rest/collections/FKMxUpYdV9N2J4XG', 'get')]
-RESPONSES[('/rest/items', 'post')] = RESPONSES[('/rest/items/Wo1JI_oZNyrfxV_t', 'get')]
+
+RESPONSES[('/rest/collections', 'post')] = Response(
+    ('/rest/collections', 'post'),
+    201,
+    RESPONSES[('/rest/collections/FKMxUpYdV9N2J4XG', 'get')].content)
+RESPONSES[('/rest/items', 'post')] = Response(
+    ('/rest/items', 'post'),
+    201,
+    RESPONSES[('/rest/items/Wo1JI_oZNyrfxV_t', 'get')].content)
 
 
 @all_requests
@@ -231,6 +245,7 @@ class ApiTest(TestCase):
             collection.dumps()
             repr(collection)
             collection2 = self.api.create('collection', title='abc')
+            collection2.add_item(referenceUrl='http://example.org/')
             assert collection2
 
     def test_item(self):
@@ -243,8 +258,10 @@ class ApiTest(TestCase):
             self.assertRaises(AttributeError, getattr, item, 'abc')
             self.assertRaises(AttributeError, setattr, item, 'id', 'abc')
             self.assertEqual(item.content.text, 'test')
-            item2 = self.api.create('item', collectionId='abc')
+            item2 = self.api.create('item', collectionId='abc', file=__file__)
             assert item2
+            item2.delete()
+            self.api.delete(item)
 
     def test_cli(self):
         from pyimeji.cli import main
