@@ -1,7 +1,6 @@
 # coding=utf8
 from __future__ import unicode_literals
 from unittest import TestCase
-from collections import namedtuple
 from datetime import datetime
 
 from httmock import all_requests, response, HTTMock
@@ -206,7 +205,45 @@ RESPONSES = [
             }
         ],
         "profileId": "dhV6XK39_UPrItK5"
-    })
+    }),
+    Response(('/rest/profiles/dhV6XK39_UPrItK5', 'get'), 200, {
+        "id": "dhV6XK39_UPrItK5",
+        "createdBy": {
+            "fullname": "Saquet, Bastien",
+            "userId": "zhcQKsMR0A9SiC6x"
+        },
+        "modifiedBy": {
+            "fullname": "Saquet, Bastien",
+            "userId": "zhcQKsMR0A9SiC6x"
+        },
+        "createdDate": "2014-10-09T13:01:49 +0200",
+        "modifiedDate": "2014-11-20T10:31:13 +0100",
+        "versionDate": "2014-10-16T11:15:54 +0200",
+        "status": "RELEASED",
+        "version": 0,
+        "discardComment": "",
+        "title": "Research Data",
+        "description": "Test for research data",
+        "statements": [
+            {
+                "id": "xx9HntRF7GuFIJA",
+                "pos": 0,
+                "type": "http://imeji.org/terms/metadata#text",
+                "labels": [
+                    {
+                        "value": "titel",
+                        "lang": "en"
+                    }
+                ],
+                "vocabulary": None,
+                "literalConstraints": [],
+                "minOccurs": "0",
+                "maxOccurs": "1",
+                "parentStatementId": None,
+                "useInPreview": True
+            },
+        ]
+    }),
 ]
 RESPONSES = {r.key: r for r in RESPONSES}
 
@@ -262,6 +299,11 @@ class ApiTest(TestCase):
             assert item2
             item2.delete()
             self.api.delete(item)
+
+    def test_profile(self):
+        with HTTMock(imeji):
+            profile = self.api.profile('dhV6XK39_UPrItK5')
+            self.assertEqual(profile.title, 'Research Data')
 
     def test_cli(self):
         from pyimeji.cli import main
