@@ -40,9 +40,9 @@ RESPONSES = [
         "filename": "virr-image.tif",
         "mimetype": "application/octet-stream",
         "checksumMd5": "006a6dc402c6d84dc4c10d955599f57c",
-        "webResolutionUrlUrl": "http://dev-faces.mpdl.mpg.de/imeji/file/FKMxUpYdV9N2J4XG/2f/90/53/9e-a090-416f-bc4e-f760c4c42fae/0/web/00e2470c22c8ff97d7569bc488dfe42a.jpg",
-        "thumbnailUrl": "http://dev-faces.mpdl.mpg.de/imeji/file/FKMxUpYdV9N2J4XG/2f/90/53/9e-a090-416f-bc4e-f760c4c42fae/0/thumbnail/00e2470c22c8ff97d7569bc488dfe42a.jpg",
-        "fileUrl": "http://dev-faces.mpdl.mpg.de/imeji/file/FKMxUpYdV9N2J4XG/2f/90/53/9e-a090-416f-bc4e-f760c4c42fae/0/original/00e2470c22c8ff97d7569bc488dfe42a.tif",
+        "webResolutionUrlUrl": "http://example.org/image.jpg",
+        "thumbnailUrl": "http://example.org/image.jpg",
+        "fileUrl": "http://example.org/image.jpg",
         "metadata": [
             {
                 "position": 0,
@@ -88,14 +88,15 @@ RESPONSES = [
                         "identifiers": [
                             {
                                 "type": "imeji",
-                                "value": "http://pubman.mpdl.mpg.de/cone/persons/resource/persons96343"
+                                "value": "http://pubman.mpdl.mpg.de/cone/persons"
+                                         "/resource/persons96343"
                             }
                         ],
                         "organizations": [
                             {
                                 "position": 0,
                                 "id": "KHUV7faLBp9R5Zqm",
-                                "name": "Innovations, Max Planck Digital Library, Max Planck Society",
+                                "name": "Innovations, MPDL, Max Planck Society",
                                 "description": "",
                                 "identifiers": [
                                     {
@@ -109,7 +110,7 @@ RESPONSES = [
                         ]
                     }
                 },
-                "statementUri": "http://dev-faces.mpdl.mpg.de/imeji/statement/PEZt5pc6csPGhqf",
+                "statementUri": "http://example.org/statement",
                 "typeUri": "http://imeji.org/terms/metadata#conePerson",
                 "labels": [
                     {
@@ -152,14 +153,15 @@ RESPONSES = [
                 "identifiers": [
                     {
                         "type": "imeji",
-                        "value": "http://pubman.mpdl.mpg.de/cone/persons/resource/persons96343"
+                        "value": "http://pubman.mpdl.mpg.de/cone/persons"
+                                 "/resource/persons96343"
                     }
                 ],
                 "organizations": [
                     {
                         "position": 0,
                         "id": "94zMk2OtjJAWtXIH",
-                        "name": "Innovations, Max Planck Digital Library, Max Planck Society",
+                        "name": "Innovations, MPDL, Max Planck Society",
                         "description": "",
                         "identifiers": [
                             {
@@ -183,14 +185,15 @@ RESPONSES = [
                 "identifiers": [
                     {
                         "type": "imeji",
-                        "value": "http://pubman.mpdl.mpg.de/cone/persons/resource/persons96308"
+                        "value": "http://pubman.mpdl.mpg.de/cone/persons"
+                                 "/resource/persons96308"
                     }
                 ],
                 "organizations": [
                     {
                         "position": 0,
                         "id": "OSCfm3llkE3Foa4",
-                        "name": "Innovations, Max Planck Digital Library, Max Planck Society",
+                        "name": "Innovations, MPDL, Max Planck Society",
                         "description": "",
                         "identifiers": [
                             {
@@ -311,6 +314,6 @@ class ApiTest(TestCase):
 
         with HTTMock(imeji):
             res = main(
-                ('--service=%s retrieve collection FKMxUpYdV9N2J4XG' % SERVICE_URL)\
+                ('--service=%s retrieve collection FKMxUpYdV9N2J4XG' % SERVICE_URL)
                 .split())
             self.assertIsInstance(res, Collection)

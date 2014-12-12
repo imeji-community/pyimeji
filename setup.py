@@ -26,7 +26,7 @@ setup(
     long_description=read("README.rst"),
     author='Robert Forkel',
     author_email='xrotwang@googlemail.com',
-    url='https://github.com/clld/pyimeji',
+    url='https://github.com/imeji-community/pyimeji',
     install_requires=requires,
     license=read("LICENSE"),
     zip_safe=False,

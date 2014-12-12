@@ -18,7 +18,7 @@ class ConfigTest(TestCase):
         from pyimeji.config import Config
 
         self.assertFalse(os.path.exists(self.cfg))
-        cfg = Config(config_dir=self.cfg)
+        Config(config_dir=self.cfg)
         self.assertTrue(os.path.exists(self.cfg))
 
     def test_existing_config(self):
@@ -33,4 +33,3 @@ option = 12
 
         cfg = Config(config_dir=self.cfg)
         self.assertEqual(cfg.get('section', 'option'), '12')
-
