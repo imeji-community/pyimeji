@@ -43,7 +43,7 @@ setup(
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy'
     ],
-    py_modules=["imeji"],
+    py_modules=["pyimeji"],
     entry_points={
         'console_scripts': [
             "imeji = pyimeji.cli:main"
