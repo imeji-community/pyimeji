@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 import sys
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 requires = [
@@ -43,7 +43,7 @@ setup(
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy'
     ],
-    py_modules=["pyimeji"],
+    packages=find_packages(),
     entry_points={
         'console_scripts': [
             "imeji = pyimeji.cli:main"
