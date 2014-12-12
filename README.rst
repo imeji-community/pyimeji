@@ -5,19 +5,18 @@ imeji
 .. image:: https://travis-ci.org/imeji-community/pyimeji.png?branch=master
         :target: https://travis-ci.org/imeji-community/pyimeji
 
-.. image:: https://pypip.in/d/pyimeji/badge.png
-        :target: https://crate.io/packages/pyimeji?version=latest
-
 .. image:: https://readthedocs.org/projects/pyimeji/badge/?version=latest
         :target: https://readthedocs.org/projects/pyimeji/?badge=latest
         :alt: Documentation Status
 
-A python wrapper for the imeji API
+A python wrapper for the `imeji <http://imeji.org>`_ API
 
 Features
 --------
 
-* TODO
+- create and retrieve collections and items.
+- delete items.
+- retrieve profiles.
 
 Requirements
 ------------

@@ -21,12 +21,12 @@ def read(fname):
 
 setup(
     name='pyimeji',
-    version="0.1.0",
+    version="0.1.1",
     description='A python wrapper for the imeji API',
     long_description=read("README.rst"),
     author='Robert Forkel',
     author_email='xrotwang@googlemail.com',
-    url='https://github.com/clld/pyimeji',
+    url='https://github.com/imeji-community/pyimeji',
     install_requires=requires,
     license=read("LICENSE"),
     zip_safe=False,

@@ -34,7 +34,6 @@ def main(argv=None):  # pragma: no cover
     cfg = Config()
     args = docopt(__doc__, version=__version__, argv=argv)
     api = Imeji(cfg, service_url=args['--service'])
-    #print(args)
     if args['list']:
         return getattr(api, args['<what>'])()
     elif args['retrieve']:

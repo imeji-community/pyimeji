@@ -95,7 +95,6 @@ class Item(Resource):
     def save(self):
         if self._json.get('id'):
             raise NotImplemented()  # pragma: no cover
-            #return Resource.save(self)
         # FIXME: verify md5 sum upon creation of item from local file!
         return self.__class__(
             self._api._req(
