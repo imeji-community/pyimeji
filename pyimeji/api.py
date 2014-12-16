@@ -1,9 +1,14 @@
 """A client for the REST API of imeji instances."""
+import logging
+
 import requests
 from six import string_types
 
 from pyimeji import resource
 from pyimeji.config import Config
+
+
+log = logging.getLogger(__name__)
 
 
 class GET(object):
@@ -69,11 +74,14 @@ class Imeji(object):
         method = getattr(self.session, method.lower())
         res = method(self.service_url + '/rest' + path, **kw)
         if assert_status:
-            assert res.status_code == assert_status
+            if res.status_code != assert_status:  # pragma: no cover
+                log.error(res.text[:100])
+                raise AssertionError()
         if json:
             try:
                 res = res.json()
             except ValueError:  # pragma: no cover
+                log.error(res.text[:100])
                 pass
         return res
 
@@ -88,3 +96,8 @@ class Imeji(object):
 
     def delete(self, rsc):
         return rsc.delete()
+
+    def update(self, rsc, **kw):
+        for k, v in kw.items():
+            setattr(rsc, k, v)
+        return rsc.save()
