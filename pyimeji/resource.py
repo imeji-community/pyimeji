@@ -69,7 +69,8 @@ class Resource(object):
         return self.__class__(self._api._req(self._path(), **kw), self._api)
 
     def delete(self):
-        return self._api._req(self._path(), method='delete')
+        return self._api._req(
+            self._path(), method='delete', assert_status=204, json=False)
 
 
 class Collection(Resource):
@@ -87,20 +88,28 @@ class Item(Resource):
     __subresources__ = {'content': False}
 
     def __init__(self, d, api):
-        self._file = d.pop('file', None)
-        if self._file:
-            assert os.path.exists(self._file)
+        self.__file = None
+        _file = d.pop('_file', None)
+        if _file:
+            setattr(self, '_file', _file)
         Resource.__init__(self, d, api)
 
+    @property
+    def _file(self):
+        return self.__file
+
+    @_file.setter
+    def _file(self, value):
+        assert os.path.exists(value)
+        self.__file = value
+
     def save(self):
-        if self._json.get('id'):
-            raise NotImplemented()  # pragma: no cover
         # FIXME: verify md5 sum upon creation of item from local file!
         return self.__class__(
             self._api._req(
                 self._path(),
-                method='post',
-                assert_status=201,
+                method='put' if self._json.get('id') else 'post',
+                assert_status=200 if self._json.get('id') else 201,
                 files=dict(
                     file=open(self._file, 'rb') if self._file else '',
                     json=self.dumps())),

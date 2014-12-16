@@ -33,11 +33,23 @@ This file can be customized e.g. to provide connection info:
     password = ****
 
 
-First steps
-~~~~~~~~~~~
+A data curation workflow
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+In the following we use pyimeji to curate a data collection on an imeji instance.
+
+1. Creating the collection:
 
 .. code-block:: python
 
     >>> from pyimeji.api import Imeji
     >>> api = Imeji()
     >>> collection = api.create('collection', title='hello world!')
+
+2. Adding items:
+
+.. code-block:: python
+
+    >>> item1 = collection.add_item(_file='/path/to/file/in/local/filesystem')
+    >>> item2 = collection.add_item(fetchUrl='http://example.org/')
+    >>> item3 = collection.add_item(referenceUrl='http://example.org')

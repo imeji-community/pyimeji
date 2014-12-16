@@ -18,7 +18,7 @@ class Response(object):
 
 RESPONSES = [
     Response(('/rest/items', 'get'), 200, {"Wo1JI_oZNyrfxV_t": {}}),
-    Response(('/rest/items/Wo1JI_oZNyrfxV_t', 'delete'), 200, {}),
+    Response(('/rest/items/Wo1JI_oZNyrfxV_t', 'delete'), 204, {}),
     Response(('/rest/items/Wo1JI_oZNyrfxV_t', 'get'), 200, {
         "id": "Wo1JI_oZNyrfxV_t",
         "createdBy": {
@@ -123,6 +123,7 @@ RESPONSES = [
     }),
     Response(('/rest/items/Wo1JI_oZNyrfxV_t/content', 'get'), 200, b'test'),
     Response(('/rest/collections', 'get'), 200, {"FKMxUpYdV9N2J4XG": {}}),
+    Response(('/rest/collections/FKMxUpYdV9N2J4XG', 'delete'), 204, {}),
     Response(('/rest/collections/FKMxUpYdV9N2J4XG', 'get'), 200, {
         "id": "FKMxUpYdV9N2J4XG",
         "createdBy": {
@@ -287,6 +288,7 @@ class ApiTest(TestCase):
             collection2 = self.api.create('collection', title='abc')
             collection2.add_item(referenceUrl='http://example.org/')
             assert collection2
+            collection2.delete()
 
     def test_item(self):
         with HTTMock(imeji):
