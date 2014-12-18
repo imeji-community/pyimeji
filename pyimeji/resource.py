@@ -12,11 +12,11 @@ class Resource(object):
         self._api = api
         self._json = d
 
-    def _path(self):
-        id_ = ''
+    def _path(self, *comps):
+        _comps = ['/%ss' % self.__class__.__name__.lower()]
         if self._json.get('id'):
-            id_ = '/' + self.id
-        return '/%ss%s' % (self.__class__.__name__.lower(), id_)
+            _comps.append(self.id)
+        return '/'.join(_comps + list(comps))
 
     def __getattr__(self, attr):
         """Attribute lookup.
@@ -78,6 +78,11 @@ class Collection(Resource):
 
     def add_item(self, **kw):
         return self._api.create('item', collectionId=self.id, **kw)
+
+    def release(self):
+        return self._api._req(
+            self._path('release'), method='put', #assert_status=204,
+            json=False)
 
 
 class Profile(Resource):

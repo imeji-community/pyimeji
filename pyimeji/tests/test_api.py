@@ -123,6 +123,7 @@ RESPONSES = [
     }),
     Response(('/rest/items/Wo1JI_oZNyrfxV_t/content', 'get'), 200, b'test'),
     Response(('/rest/collections', 'get'), 200, {"FKMxUpYdV9N2J4XG": {}}),
+    Response(('/rest/collections/FKMxUpYdV9N2J4XG/release', 'put'), 200, {}),
     Response(('/rest/collections/FKMxUpYdV9N2J4XG', 'delete'), 204, {}),
     Response(('/rest/collections/FKMxUpYdV9N2J4XG', 'get'), 200, {
         "id": "FKMxUpYdV9N2J4XG",
@@ -255,6 +256,10 @@ RESPONSES[('/rest/collections', 'post')] = Response(
     ('/rest/collections', 'post'),
     201,
     RESPONSES[('/rest/collections/FKMxUpYdV9N2J4XG', 'get')].content)
+RESPONSES[('/rest/items/Wo1JI_oZNyrfxV_t', 'put')] = Response(
+    ('/rest/items', 'post'),
+    200,
+    RESPONSES[('/rest/items/Wo1JI_oZNyrfxV_t', 'get')].content)
 RESPONSES[('/rest/items', 'post')] = Response(
     ('/rest/items', 'post'),
     201,
@@ -288,10 +293,12 @@ class ApiTest(TestCase):
             collection2 = self.api.create('collection', title='abc')
             collection2.add_item(referenceUrl='http://example.org/')
             assert collection2
+            collection.release()
             collection2.delete()
 
     def test_item(self):
         with HTTMock(imeji):
+            self.api.create('item', _file=__file__)
             items = self.api.items()
             self.assertIn('Wo1JI_oZNyrfxV_t', items)
             item = self.api.item(list(items.keys())[0])
@@ -302,6 +309,7 @@ class ApiTest(TestCase):
             self.assertEqual(item.content.text, 'test')
             item2 = self.api.create('item', collectionId='abc', file=__file__)
             assert item2
+            self.api.update(item2, filename='name.png')
             item2.delete()
             self.api.delete(item)
 
