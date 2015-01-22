@@ -17,7 +17,11 @@ Releasing pyimeji
   $ cd docs
   $ make clean html
 
-- Change setup.py version to the new version number.
+- Change version to the new version number in
+
+  - setup.py
+  - pyimeji/__init__.py
+  - docs/conf.py
 
 - Bump version number:
 

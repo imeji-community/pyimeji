@@ -75,13 +75,15 @@ class Imeji(object):
         res = method(self.service_url + '/rest' + path, **kw)
         if assert_status:
             if res.status_code != assert_status:  # pragma: no cover
-                log.error(res.text[:100])
+                log.error(
+                    'got HTTP %s, expected HTTP %s' % (res.status_code, assert_status))
+                log.error(res.text[:1000])
                 raise AssertionError()
         if json:
             try:
                 res = res.json()
             except ValueError:  # pragma: no cover
-                log.error(res.text[:100])
+                log.error(res.text[:1000])
                 pass
         return res
 

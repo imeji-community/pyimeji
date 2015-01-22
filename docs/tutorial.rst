@@ -4,6 +4,10 @@ Tutorial
 Installation
 ~~~~~~~~~~~~
 
+From PyPI::
+
+    pip install pyimeji
+
 From GitHub::
 
     git clone https://github.com/imeji-community/pyimeji.git
@@ -20,7 +24,7 @@ Configuration
 Upon first instantiation of an :py:class:pyimeji.api.Imeji`` object, a configuration will
 be placed into the users `configuration directory <https://pypi.python.org/pypi/appdirs>`_.
 
-This file can be customized e.g. to provide connection info:
+This file can be customized e.g. to provide connection info or to set the logging level:
 
 .. code-block:: ini
 
@@ -31,6 +35,11 @@ This file can be customized e.g. to provide connection info:
     url = http://localhost/imeji
     user = ****
     password = ****
+
+.. note::
+
+    The logging level will be passed on to the logger for the *requests* library, too. So
+    setting it to ``DEBUG`` will add information about the HTTP connection to the log.
 
 
 A data curation workflow
@@ -47,6 +56,9 @@ In the following we use pyimeji to curate a data collection on an imeji instance
     >>> collection = api.create('collection', title='hello world!')
 
 2. Adding items:
+
+The imeji API supports three ways of associating an item with a file, all three of which
+you can use with *pyimeji*, too:
 
 .. code-block:: python
 
