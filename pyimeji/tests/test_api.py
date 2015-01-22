@@ -123,7 +123,7 @@ RESPONSES = [
     }),
     Response(('/rest/items/Wo1JI_oZNyrfxV_t/content', 'get'), 200, b'test'),
     Response(('/rest/collections', 'get'), 200, {"FKMxUpYdV9N2J4XG": {}}),
-    Response(('/rest/collections/FKMxUpYdV9N2J4XG/release', 'put'), 200, {}),
+    Response(('/rest/collections/FKMxUpYdV9N2J4XG/release', 'put'), 204, {}),
     Response(('/rest/collections/FKMxUpYdV9N2J4XG', 'delete'), 204, {}),
     Response(('/rest/collections/FKMxUpYdV9N2J4XG', 'get'), 200, {
         "id": "FKMxUpYdV9N2J4XG",

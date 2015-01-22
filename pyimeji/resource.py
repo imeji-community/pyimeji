@@ -81,8 +81,7 @@ class Collection(Resource):
 
     def release(self):
         return self._api._req(
-            self._path('release'), method='put', #assert_status=204,
-            json=False)
+            self._path('release'), method='put', assert_status=204, json=False)
 
 
 class Profile(Resource):
