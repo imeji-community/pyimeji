@@ -1,7 +1,14 @@
 import os
 import json
 
+from six import string_types
 from dateutil.parser import parse
+
+from pyimeji.util import jsonload
+
+
+class ReadOnlyAttributeError(AttributeError):
+    pass
 
 
 class Resource(object):
@@ -11,6 +18,11 @@ class Resource(object):
     def __init__(self, d, api):
         self._api = api
         self._json = d
+        for k, v in d.items():
+            try:
+                self.__setattr__(k, v)
+            except ReadOnlyAttributeError:
+                pass
 
     def _path(self, *comps):
         _comps = ['/%ss' % self.__class__.__name__.lower()]
@@ -50,7 +62,7 @@ class Resource(object):
         if attr.startswith('_'):
             return object.__setattr__(self, attr, value)
         if attr in self.__readonly__:
-            raise AttributeError('%s is readonly' % attr)
+            raise ReadOnlyAttributeError('%s is readonly' % attr)
         self._json[attr] = value
 
     def dumps(self, **kw):
@@ -74,14 +86,20 @@ class Resource(object):
 
 
 class Collection(Resource):
-    __subresources__ = ['mdprofiles']
-
     def add_item(self, **kw):
         return self._api.create('item', collectionId=self.id, **kw)
 
     def release(self):
         return self._api._req(
-            self._path('release'), method='put', assert_status=204, json=False)
+            self._path('release'), method='put', assert_status=200, json=False)
+
+    def __setattr__(self, attr, value):
+        if attr == 'profile':
+            if isinstance(value, string_types):
+                value = dict(profileId=value, method="copy")
+            elif isinstance(value, Profile):
+                value = dict(profileId=value.id, method="copy")
+        Resource.__setattr__(self, attr, value)
 
 
 class Profile(Resource):
@@ -102,6 +120,12 @@ class Item(Resource):
     def _file(self):
         return self.__file
 
+    def __setattr__(self, attr, value):
+        if attr == 'metadata' and isinstance(value, string_types):
+            # if a string is passed as metadata, it is interpreted as filename.
+            value = jsonload(value)
+        Resource.__setattr__(self, attr, value)
+
     @_file.setter
     def _file(self, value):
         assert os.path.exists(value)
@@ -109,12 +133,12 @@ class Item(Resource):
 
     def save(self):
         # FIXME: verify md5 sum upon creation of item from local file!
+        kw = dict(
+            method='put' if self._json.get('id') else 'post',
+            assert_status=200 if self._json.get('id') else 201,
+            files=dict(json=self.dumps(), file=''))
+        if self._file:
+            kw['files']['file'] = open(self._file, 'rb')
         return self.__class__(
-            self._api._req(
-                self._path(),
-                method='put' if self._json.get('id') else 'post',
-                assert_status=200 if self._json.get('id') else 201,
-                files=dict(
-                    file=open(self._file, 'rb') if self._file else '',
-                    json=self.dumps())),
+            self._api._req(self._path(), **kw),
             self._api)

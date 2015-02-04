@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from unittest import TestCase
 from datetime import datetime
+import os
 
 from httmock import all_requests, response, HTTMock
 
@@ -123,7 +124,7 @@ RESPONSES = [
     }),
     Response(('/rest/items/Wo1JI_oZNyrfxV_t/content', 'get'), 200, b'test'),
     Response(('/rest/collections', 'get'), 200, {"FKMxUpYdV9N2J4XG": {}}),
-    Response(('/rest/collections/FKMxUpYdV9N2J4XG/release', 'put'), 204, {}),
+    Response(('/rest/collections/FKMxUpYdV9N2J4XG/release', 'put'), 200, {}),
     Response(('/rest/collections/FKMxUpYdV9N2J4XG', 'delete'), 204, {}),
     Response(('/rest/collections/FKMxUpYdV9N2J4XG', 'get'), 200, {
         "id": "FKMxUpYdV9N2J4XG",
@@ -209,7 +210,10 @@ RESPONSES = [
                 ]
             }
         ],
-        "profileId": "dhV6XK39_UPrItK5"
+        "profile": {
+            "profileId": "dhV6XK39_UPrItK5",
+            "method": ""
+        }
     }),
     Response(('/rest/profiles/dhV6XK39_UPrItK5', 'get'), 200, {
         "id": "dhV6XK39_UPrItK5",
@@ -290,11 +294,16 @@ class ApiTest(TestCase):
             self.assertEqual(collection.title, 'New title')
             collection.dumps()
             repr(collection)
-            collection2 = self.api.create('collection', title='abc')
+            collection2 = self.api.create(
+                'collection', title='abc', profile='dhV6XK39_UPrItK5')
             collection2.add_item(referenceUrl='http://example.org/')
             assert collection2
             collection.release()
             collection2.delete()
+            collection3 = self.api.create(
+                'collection',
+                title='cde',
+                profile=self.api.profile('dhV6XK39_UPrItK5'))
 
     def test_item(self):
         with HTTMock(imeji):
@@ -309,6 +318,7 @@ class ApiTest(TestCase):
             self.assertEqual(item.content.text, 'test')
             item2 = self.api.create('item', collectionId='abc', file=__file__)
             assert item2
+            item2.metadata = os.path.join(os.path.dirname(__file__), 'test.json')
             self.api.update(item2, filename='name.png')
             item2.delete()
             self.api.delete(item)
