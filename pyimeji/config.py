@@ -26,7 +26,7 @@ class Config(RawConfigParser):
         else:
             if not os.path.exists(config_dir):
                 try:
-                    os.mkdir(config_dir)
+                    os.makedirs(config_dir)
                 except OSError:  # pragma: no cover
                     # this happens when run on travis-ci, by a system user.
                     pass

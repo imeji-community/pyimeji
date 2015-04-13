@@ -1,0 +1,38 @@
+{
+        "id": "dhV6XK39_UPrItK5",
+        "createdBy": {
+            "fullname": "Saquet, Bastien",
+            "userId": "zhcQKsMR0A9SiC6x"
+        },
+        "modifiedBy": {
+            "fullname": "Saquet, Bastien",
+            "userId": "zhcQKsMR0A9SiC6x"
+        },
+        "createdDate": "2014-10-09T13:01:49 +0200",
+        "modifiedDate": "2014-11-20T10:31:13 +0100",
+        "versionDate": "2014-10-16T11:15:54 +0200",
+        "status": "RELEASED",
+        "version": 0,
+        "discardComment": "",
+        "title": "Research Data",
+        "description": "Test for research data",
+        "statements": [
+            {
+                "id": "xx9HntRF7GuFIJA",
+                "pos": 0,
+                "type": "http://imeji.org/terms/metadata#text",
+                "labels": [
+                    {
+                        "value": "titel",
+                        "lang": "en"
+                    }
+                ],
+                "vocabulary": null,
+                "literalConstraints": [],
+                "minOccurs": "0",
+                "maxOccurs": "1",
+                "parentStatementId": null,
+                "useInPreview": true
+            }
+        ]
+}

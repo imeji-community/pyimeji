@@ -1,0 +1,50 @@
+{
+        "id": "MAlOuZ4Y9iDR_",
+        "createdBy": {
+            "fullname": "test, 111",
+            "userId": "szf0k4sJ80F94oXl"
+        },
+        "modifiedBy": {
+            "fullname": "test, 111",
+            "userId": "szf0k4sJ80F94oXl"
+        },
+        "createdDate": "2015-04-09T11:00:20 +0200",
+        "modifiedDate": "2015-04-09T11:02:28 +0200",
+        "versionDate": "2015-04-09T11:00:51 +0200",
+        "status": "RELEASED",
+        "version": 1,
+        "discardComment": "",
+        "title": "kkk",
+        "description": "",
+        "contributors": [
+            {
+                "id": "01fdCzxrz8tfaMtf",
+                "familyName": "test",
+                "givenName": "111",
+                "completeName": "test, 111",
+                "alternativeName": "",
+                "role": "",
+                "identifiers": [
+                    {
+                        "type": "imeji",
+                        "value": "9GTlDmy050XjQNy"
+                    }
+                ],
+                "organizations": [
+                    {
+                        "id": "7hvF1LYbYPRZOx2V",
+                        "name": "nm",
+                        "description": "",
+                        "identifiers": [
+                            {
+                                "type": "imeji",
+                                "value": "aO2GX4JMX4fARd6P"
+                            }
+                        ],
+                        "city": "",
+                        "country": ""
+                    }
+                ]
+            }
+        ]
+}

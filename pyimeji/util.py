@@ -1,7 +1,14 @@
+import os
 import json
 import io
 
 from six import PY3
+
+import pyimeji
+
+
+def pkg_path(*comps):
+    return os.path.join(os.path.dirname(pyimeji.__file__), *comps)
 
 
 def jsonload(path, **kw):
@@ -14,3 +21,10 @@ def jsonload(path, **kw):
         _kw['encoding'] = 'utf8'
     with io.open(path, **_kw) as fp:
         return json.load(fp, **kw)
+
+
+def jsondumps(obj):
+    if PY3:  # pragma: no cover
+        return json.dumps(obj).encode('utf8')
+    else:
+        return json.dumps(obj)

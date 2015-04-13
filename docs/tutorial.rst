@@ -65,3 +65,28 @@ you can use with *pyimeji*, too:
     >>> item1 = collection.add_item(_file='/path/to/file/in/local/filesystem')
     >>> item2 = collection.add_item(fetchUrl='http://example.org/')
     >>> item3 = collection.add_item(referenceUrl='http://example.org')
+
+3. Release:
+
+Once a collection has items, it may be released:
+
+.. code-block:: python
+
+    >>> collection.release()
+    >>> assert api.collection(collection.id).status == 'RELEASED'
+
+.. note::
+
+    Synchronisation of local objects and the server have to happen explicitely, i.e.
+    when an object has been changed locally, these changes must be sent to the server
+    calling the objects' ``save`` method and after changing the server state with methods
+    like ``release``, the local objects have to be refreshed to reflect the updated state.
+
+Albums:
+
+Now these items can be aggregated in albums:
+
+.. code-block:: python
+
+    >>> album = api.create('album', title='hello world!')
+    >>> album.link(*list(collection.items().keys()))

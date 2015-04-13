@@ -1,5 +1,6 @@
 import os
 import json
+from collections import OrderedDict
 
 from six import string_types
 from dateutil.parser import parse
@@ -13,20 +14,23 @@ class ReadOnlyAttributeError(AttributeError):
 
 class Resource(object):
     __readonly__ = ['id', 'createdBy', 'modifiedBy', 'createdDate', 'modifiedDate']
-    __subresources__ = []
 
-    def __init__(self, d, api):
+    def __init__(self, d, api, parent=None):
         self._api = api
         self._json = d
+        self._parent = parent
         for k, v in d.items():
             try:
                 self.__setattr__(k, v)
             except ReadOnlyAttributeError:
                 pass
 
-    def _path(self, *comps):
-        _comps = ['/%ss' % self.__class__.__name__.lower()]
-        if self._json.get('id'):
+    def _path(self, *comps, **kw):
+        _comps = []
+        if self._parent:
+            _comps = ['/%ss' % self._parent.__class__.__name__.lower(), self._parent.id]
+        _comps.append('/%ss' % self.__class__.__name__.lower())
+        if self._json.get('id') and not kw.get('batch'):
             _comps.append(self.id)
         return '/'.join(_comps + list(comps))
 
@@ -35,15 +39,8 @@ class Resource(object):
 
         Attributes provide easy access to the following things:
 
-        - subresources,
         - top-level keys in the resource's JSON representation.
         """
-        if attr in self.__subresources__:
-            # we fetch subresources using an API call when the corresponding attribute
-            # is accessed - every time.
-            json = True if not isinstance(self.__subresources__, dict) \
-                else self.__subresources__[attr]
-            return self._api._req(self._path() + '/' + attr, json=json)
         try:
             res = self._json[attr]
         except KeyError:
@@ -85,13 +82,60 @@ class Resource(object):
             self._path(), method='delete', assert_status=204, json=False)
 
 
-class Collection(Resource):
-    def add_item(self, **kw):
-        return self._api.create('item', collectionId=self.id, **kw)
+class WithAuthor(Resource):
+    def __init__(self, d, api):
+        if 'contributors' not in d:
+            d['contributors'] = [
+                {
+                    'familyName': 'none',
+                    'role': 'author',
+                    'organizations': [{'name': 'none'}]}]
+        Resource.__init__(self, d, api)
+
+
+class DiscardReleaseMixin(object):
+    def discard(self, comment):
+        return self._api._req(
+            self._path('discard'),
+            data=dict(id=self.id, discardComment=comment),
+            method='put',
+            assert_status=200,
+            json=False)
 
     def release(self):
         return self._api._req(
             self._path('release'), method='put', assert_status=200, json=False)
+
+
+class Album(WithAuthor, DiscardReleaseMixin):
+    def members(self):
+        return OrderedDict(
+            [(d['id'], d) for d in self._api._req(self._path('members'))])
+
+    def member(self, id):
+        for id_, d in self.members().items():
+            if id_ == id:
+                return Resource(d, self._api, parent=self)
+
+    def _act_on_members(self, op, *ids, **kw):
+        return self._api._req(
+            self._path('members', op), method='put', data=json.dumps(ids), **kw)
+
+    def link(self, *ids):
+        return self._act_on_members('link', *ids)
+
+    def unlink(self, *ids):
+        return self._act_on_members('unlink', *ids, **{'assert_status': 204})
+
+
+class Collection(WithAuthor, DiscardReleaseMixin):
+    def items(self, q=None):
+        return {
+            d['id']: Item(d, self._api) for d in
+            self._api._req(self._path('items'), params=dict(q=q) if q else {})}
+
+    def add_item(self, **kw):
+        return self._api.create('item', collectionId=self.id, **kw)
 
     def __setattr__(self, attr, value):
         if attr == 'profile':
@@ -101,14 +145,18 @@ class Collection(Resource):
                 value = dict(profileId=value.id, method="copy")
         Resource.__setattr__(self, attr, value)
 
+    def save(self):
+        if self._json.get('id'):
+            kw = dict(method='put', data=dict(json=self.dumps()))
+            return self.__class__(self._api._req(self._path(), **kw), self._api)
+        return Resource.save(self)
 
-class Profile(Resource):
+
+class Profile(Resource, DiscardReleaseMixin):
     pass
 
 
 class Item(Resource):
-    __subresources__ = {'content': False}
-
     def __init__(self, d, api):
         self.__file = None
         _file = d.pop('_file', None)
