@@ -1,0 +1,101 @@
+{
+        "id": "Wo1JI_oZNyrfxV_t",
+        "createdBy": {
+            "fullname": "Saquet",
+            "id": "zhcQKsMR0A9SiC6x"
+        },
+        "modifiedBy": {
+            "fullname": "Saquet",
+            "id": "zhcQKsMR0A9SiC6x"
+        },
+        "createdDate": "2014-10-16T11:01:13 +0200",
+        "modifiedDate": "2014-11-20T10:31:15 +0100",
+        "versionDate": "2014-10-16T11:15:97 +0200",
+        "status": "RELEASED",
+        "version": 1,
+        "discardComment": "",
+        "visibility": "PUBLIC",
+        "collectionId": "FKMxUpYdV9N2J4XG",
+        "filename": "virr-image.tif",
+        "mimetype": "application/octet-stream",
+        "checksumMd5": "006a6dc402c6d84dc4c10d955599f57c",
+        "webResolutionUrlUrl": "http://example.org/image.jpg",
+        "thumbnailUrl": "http://example.org/image.jpg",
+        "fileUrl": "http://example.org/image.jpg",
+        "metadata": [
+            {
+                "position": 0,
+                "value": {
+                    "text": "title"
+                },
+                "statementUri": "http://imeji.org/terms/statement/xx9HntRF7GuFIJA",
+                "typeUri": "http://imeji.org/terms/metadata#text",
+                "labels": [
+                    {
+                        "language": "en",
+                        "value": "titel"
+                    }
+                ]
+            },
+            {
+                "position": 1,
+                "value": {
+                    "name": "Munich, Germany",
+                    "longitude": 11.5819806,
+                    "latitude": 48.1351253
+                },
+                "statementUri": "http://imeji.org/terms/statement/dCIHVzo4TWBD1bWc",
+                "typeUri": "http://imeji.org/terms/metadata#geolocation",
+                "labels": [
+                    {
+                        "language": "en",
+                        "value": "goelocation"
+                    }
+                ]
+            },
+            {
+                "position": 2,
+                "value": {
+                    "person": {
+                        "position": 0,
+                        "id": "sCooi0G_D8SW5__",
+                        "familyName": "Saquet",
+                        "givenName": "Bastien",
+                        "completeName": "Saquet, Bastien",
+                        "alternativeName": "",
+                        "role": "author",
+                        "identifiers": [
+                            {
+                                "type": "imeji",
+                                "value": "http://pubman.mpdl.mpg.de/cone/persons/resource/persons96343"
+                            }
+                        ],
+                        "organizations": [
+                            {
+                                "position": 0,
+                                "id": "KHUV7faLBp9R5Zqm",
+                                "name": "Innovations, MPDL, Max Planck Society",
+                                "description": "",
+                                "identifiers": [
+                                    {
+                                        "type": "imeji",
+                                        "value": "escidoc:persistent1"
+                                    }
+                                ],
+                                "city": "",
+                                "country": ""
+                            }
+                        ]
+                    }
+                },
+                "statementUri": "http://example.org/statement",
+                "typeUri": "http://imeji.org/terms/metadata#conePerson",
+                "labels": [
+                    {
+                        "language": "en",
+                        "value": "Person"
+                    }
+                ]
+            }
+        ]
+}

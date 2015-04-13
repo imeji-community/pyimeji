@@ -6,8 +6,15 @@ import os
 
 from httmock import all_requests, response, HTTMock
 
+from pyimeji.util import pkg_path, jsonload, jsondumps
+
 
 SERVICE_URL = 'http://example.org'
+
+
+RESOURCES = {
+    name: jsonload(pkg_path('tests', 'resources', '%s.json' % name))
+    for name in ['item', 'collection', 'album', 'profile']}
 
 
 class Response(object):
@@ -17,257 +24,36 @@ class Response(object):
         self.content = content
 
 
-RESPONSES = [
-    Response(('/rest/items', 'get'), 200, {"Wo1JI_oZNyrfxV_t": {}}),
-    Response(('/rest/items/Wo1JI_oZNyrfxV_t', 'delete'), 204, {}),
-    Response(('/rest/items/Wo1JI_oZNyrfxV_t', 'get'), 200, {
-        "id": "Wo1JI_oZNyrfxV_t",
-        "createdBy": {
-            "fullname": "Saquet",
-            "id": "zhcQKsMR0A9SiC6x"
-        },
-        "modifiedBy": {
-            "fullname": "Saquet",
-            "id": "zhcQKsMR0A9SiC6x"
-        },
-        "createdDate": "2014-10-16T11:01:13 +0200",
-        "modifiedDate": "2014-11-20T10:31:15 +0100",
-        "versionDate": "2014-10-16T11:15:97 +0200",
-        "status": "RELEASED",
-        "version": 1,
-        "discardComment": "",
-        "visibility": "PUBLIC",
-        "collectionId": "FKMxUpYdV9N2J4XG",
-        "filename": "virr-image.tif",
-        "mimetype": "application/octet-stream",
-        "checksumMd5": "006a6dc402c6d84dc4c10d955599f57c",
-        "webResolutionUrlUrl": "http://example.org/image.jpg",
-        "thumbnailUrl": "http://example.org/image.jpg",
-        "fileUrl": "http://example.org/image.jpg",
-        "metadata": [
-            {
-                "position": 0,
-                "value": {
-                    "text": "title"
-                },
-                "statementUri": "http://imeji.org/terms/statement/xx9HntRF7GuFIJA",
-                "typeUri": "http://imeji.org/terms/metadata#text",
-                "labels": [
-                    {
-                        "language": "en",
-                        "value": "titel"
-                    }
-                ]
-            },
-            {
-                "position": 1,
-                "value": {
-                    "name": "Munich, Germany",
-                    "longitude": 11.5819806,
-                    "latitude": 48.1351253
-                },
-                "statementUri": "http://imeji.org/terms/statement/dCIHVzo4TWBD1bWc",
-                "typeUri": "http://imeji.org/terms/metadata#geolocation",
-                "labels": [
-                    {
-                        "language": "en",
-                        "value": "goelocation"
-                    }
-                ]
-            },
-            {
-                "position": 2,
-                "value": {
-                    "person": {
-                        "position": 0,
-                        "id": "sCooi0G_D8SW5__",
-                        "familyName": "Saquet",
-                        "givenName": "Bastien",
-                        "completeName": "Saquet, Bastien",
-                        "alternativeName": "",
-                        "role": "author",
-                        "identifiers": [
-                            {
-                                "type": "imeji",
-                                "value": "http://pubman.mpdl.mpg.de/cone/persons"
-                                         "/resource/persons96343"
-                            }
-                        ],
-                        "organizations": [
-                            {
-                                "position": 0,
-                                "id": "KHUV7faLBp9R5Zqm",
-                                "name": "Innovations, MPDL, Max Planck Society",
-                                "description": "",
-                                "identifiers": [
-                                    {
-                                        "type": "imeji",
-                                        "value": "escidoc:persistent1"
-                                    }
-                                ],
-                                "city": "",
-                                "country": ""
-                            }
-                        ]
-                    }
-                },
-                "statementUri": "http://example.org/statement",
-                "typeUri": "http://imeji.org/terms/metadata#conePerson",
-                "labels": [
-                    {
-                        "language": "en",
-                        "value": "Person"
-                    }
-                ]
-            }
-        ]
-    }),
-    Response(('/rest/items/Wo1JI_oZNyrfxV_t/content', 'get'), 200, b'test'),
-    Response(('/rest/collections', 'get'), 200, {"FKMxUpYdV9N2J4XG": {}}),
-    Response(('/rest/collections/FKMxUpYdV9N2J4XG/release', 'put'), 200, {}),
-    Response(('/rest/collections/FKMxUpYdV9N2J4XG', 'delete'), 204, {}),
-    Response(('/rest/collections/FKMxUpYdV9N2J4XG', 'get'), 200, {
-        "id": "FKMxUpYdV9N2J4XG",
-        "createdBy": {
-            "fullname": "Saquet",
-            "id": "zhcQKsMR0A9SiC6x"
-        },
-        "modifiedBy": {
-            "fullname": "admin",
-            "id": "w7ZfmmC5LQR8KJIN"
-        },
-        "createdDate": "2014-10-09T13:01:25 +0200",
-        "modifiedDate": "2014-11-19T14:50:21 +0100",
-        "versionDate": "2014-10-16T11:15:44 +0200",
-        "status": "RELEASED",
-        "version": 1,
-        "discardComment": "",
-        "title": "Research Data",
-        "description": "Test for research data",
-        "contributors": [
-            {
-                "position": 0,
-                "id": "Od6MTBSdXYPWYSU1",
-                "familyName": "Saquet",
-                "givenName": "Bastien",
-                "completeName": "Saquet, Bastien",
-                "alternativeName": "",
-                "role": "author",
-                "identifiers": [
-                    {
-                        "type": "imeji",
-                        "value": "http://pubman.mpdl.mpg.de/cone/persons"
-                                 "/resource/persons96343"
-                    }
-                ],
-                "organizations": [
-                    {
-                        "position": 0,
-                        "id": "94zMk2OtjJAWtXIH",
-                        "name": "Innovations, MPDL, Max Planck Society",
-                        "description": "",
-                        "identifiers": [
-                            {
-                                "type": "imeji",
-                                "value": "escidoc:persistent1"
-                            }
-                        ],
-                        "city": "",
-                        "country": ""
-                    }
-                ]
-            },
-            {
-                "position": 0,
-                "id": "4S34HiEj6qvvgTV1",
-                "familyName": "Bulatovic",
-                "givenName": "Natasa",
-                "completeName": "Bulatovic, Natasa",
-                "alternativeName": "",
-                "role": "author",
-                "identifiers": [
-                    {
-                        "type": "imeji",
-                        "value": "http://pubman.mpdl.mpg.de/cone/persons"
-                                 "/resource/persons96308"
-                    }
-                ],
-                "organizations": [
-                    {
-                        "position": 0,
-                        "id": "OSCfm3llkE3Foa4",
-                        "name": "Innovations, MPDL, Max Planck Society",
-                        "description": "",
-                        "identifiers": [
-                            {
-                                "type": "imeji",
-                                "value": "escidoc:persistent1"
-                            }
-                        ],
-                        "city": "",
-                        "country": ""
-                    }
-                ]
-            }
-        ],
-        "profile": {
-            "profileId": "dhV6XK39_UPrItK5",
-            "method": ""
-        }
-    }),
-    Response(('/rest/profiles/dhV6XK39_UPrItK5', 'get'), 200, {
-        "id": "dhV6XK39_UPrItK5",
-        "createdBy": {
-            "fullname": "Saquet, Bastien",
-            "userId": "zhcQKsMR0A9SiC6x"
-        },
-        "modifiedBy": {
-            "fullname": "Saquet, Bastien",
-            "userId": "zhcQKsMR0A9SiC6x"
-        },
-        "createdDate": "2014-10-09T13:01:49 +0200",
-        "modifiedDate": "2014-11-20T10:31:13 +0100",
-        "versionDate": "2014-10-16T11:15:54 +0200",
-        "status": "RELEASED",
-        "version": 0,
-        "discardComment": "",
-        "title": "Research Data",
-        "description": "Test for research data",
-        "statements": [
-            {
-                "id": "xx9HntRF7GuFIJA",
-                "pos": 0,
-                "type": "http://imeji.org/terms/metadata#text",
-                "labels": [
-                    {
-                        "value": "titel",
-                        "lang": "en"
-                    }
-                ],
-                "vocabulary": None,
-                "literalConstraints": [],
-                "minOccurs": "0",
-                "maxOccurs": "1",
-                "parentStatementId": None,
-                "useInPreview": True
-            },
-        ]
-    }),
-]
-RESPONSES = {r.key: r for r in RESPONSES}
+RESPONSES = {}
 
-RESPONSES[('/rest/collections', 'post')] = Response(
-    ('/rest/collections', 'post'),
-    201,
-    RESPONSES[('/rest/collections/FKMxUpYdV9N2J4XG', 'get')].content)
-RESPONSES[('/rest/items/Wo1JI_oZNyrfxV_t', 'put')] = Response(
-    ('/rest/items', 'post'),
-    200,
-    RESPONSES[('/rest/items/Wo1JI_oZNyrfxV_t', 'get')].content)
-RESPONSES[('/rest/items', 'post')] = Response(
-    ('/rest/items', 'post'),
-    201,
-    RESPONSES[('/rest/items/Wo1JI_oZNyrfxV_t', 'get')].content)
+for path, method, status, content in [
+    ('items', 'get', 200, jsondumps([{"id": "Wo1JI_oZNyrfxV_t"}])),
+    ('items', 'post', 201, RESOURCES['item']),
+    ('items/Wo1JI_oZNyrfxV_t', 'delete', 204, {}),
+    ('items/Wo1JI_oZNyrfxV_t', 'get', 200, RESOURCES['item']),
+    ('items/Wo1JI_oZNyrfxV_t', 'put', 200, RESOURCES['item']),
+
+    ('collections', 'get', 200, jsondumps([{"id": "FKMxUpYdV9N2J4XG"}])),
+    ('collections', 'post', 201, RESOURCES['collection']),
+    ('collections/FKMxUpYdV9N2J4XG/release', 'put', 200, {}),
+    ('collections/FKMxUpYdV9N2J4XG', 'delete', 204, {}),
+    ('collections/FKMxUpYdV9N2J4XG', 'get', 200, RESOURCES['collection']),
+    ('collections/FKMxUpYdV9N2J4XG/items', 'get', 200, jsondumps([RESOURCES['item']])),
+
+    ('profiles/dhV6XK39_UPrItK5', 'get', 200, RESOURCES['profile']),
+
+    ('albums', 'get', 200, jsondumps([{"id": "MAlOuZ4Y9iDR_"}])),
+    ('albums', 'post', 201, RESOURCES['album']),
+    ('albums/MAlOuZ4Y9iDR_/release', 'put', 200, {}),
+    ('albums/MAlOuZ4Y9iDR_/discard', 'put', 200, {}),
+    ('albums/MAlOuZ4Y9iDR_', 'delete', 204, {}),
+    ('albums/MAlOuZ4Y9iDR_', 'get', 200, RESOURCES['album']),
+    ('albums/MAlOuZ4Y9iDR_/members', 'get', 200, jsondumps([RESOURCES['item']])),
+    ('albums/MAlOuZ4Y9iDR_/members/link', 'put', 200, {}),
+    ('albums/MAlOuZ4Y9iDR_/members/unlink', 'put', 204, {}),
+]:
+    r = Response(('/rest/' + path, method), status, content)
+    RESPONSES[r.key] = r
 
 
 @all_requests
@@ -283,11 +69,23 @@ class ApiTest(TestCase):
 
         self.api = Imeji(service_url=SERVICE_URL)
 
+    def test_album(self):
+        with HTTMock(imeji):
+            albums = self.api.albums()
+            album = self.api.album(list(albums.keys())[0])
+            assert 'Wo1JI_oZNyrfxV_t' in album.members()
+            assert album.id in album.member('Wo1JI_oZNyrfxV_t')._path()
+            album.release()
+            album.link()
+            album.unlink()
+            album.discard('test')
+
     def test_collection(self):
         with HTTMock(imeji):
             collections = self.api.collections()
             self.assertIn('FKMxUpYdV9N2J4XG', collections)
             collection = self.api.collection(list(collections.keys())[0])
+            assert 'Wo1JI_oZNyrfxV_t' in collection.items()
             self.assertEqual(collection.title, 'Research Data')
             collection.title = 'New title'
             self.assertIsInstance(collection.createdDate, datetime)
@@ -315,7 +113,6 @@ class ApiTest(TestCase):
             self.assertRaises(ValueError, self.api.item)
             self.assertRaises(AttributeError, getattr, item, 'abc')
             self.assertRaises(AttributeError, setattr, item, 'id', 'abc')
-            self.assertEqual(item.content.text, 'test')
             item2 = self.api.create('item', collectionId='abc', file=__file__)
             assert item2
             item2.metadata = os.path.join(os.path.dirname(__file__), 'test.json')
