@@ -2,6 +2,8 @@
 Releasing pyimeji
 =================
 
+Clone imeji-community/pyimeji and switch to the master branch. Then:
+
 - Do platform test via tox:
 
   $ tox -r
