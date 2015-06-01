@@ -190,3 +190,14 @@ class Item(Resource):
         return self.__class__(
             self._api._req(self._path(), **kw),
             self._api)
+
+    def save2(self, json):
+        # FIXME: verify md5 sum upon creation of item from local file!
+        kw = dict(
+            method = 'patch',
+            assert_status=200 if self._json.get('id') else 201,
+            json = json
+        )
+        return self.__class__(
+            self._api._req(self._path(), **kw),
+            self._api)

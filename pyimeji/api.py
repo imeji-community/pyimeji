@@ -72,7 +72,7 @@ class Imeji(object):
         if user and password:
             self.session.auth = (user, password)
 
-    def _req(self, path, method='get', json=True, assert_status=200, **kw):
+    def _req(self, path, method='get', json_res=True, assert_status=200, **kw):
         """Make a request to the API of an imeji instance.
 
         :param path: HTTP path.
@@ -92,7 +92,7 @@ class Imeji(object):
                     'got HTTP %s, expected HTTP %s' % (res.status_code, assert_status))
                 log.error(res.text[:1000])
                 raise AssertionError()
-        if json:
+        if json_res:
             try:
                 res = res.json()
             except ValueError:  # pragma: no cover
@@ -121,3 +121,6 @@ class Imeji(object):
         for k, v in kw.items():
             setattr(rsc, k, v)
         return rsc.save()
+
+    def patch(self, rsc, json ,**kw):
+        rsc.save2(json)
