@@ -145,7 +145,7 @@ class Collection(WithAuthor, DiscardReleaseMixin):
                 value = dict(profileId=value.id, method="copy")
         Resource.__setattr__(self, attr, value)
 
-    def save(self):
+    def save(self, syntax=""):
         if self._json.get('id'):
             kw = dict(method='put', data=dict(json=self.dumps()))
             return self.__class__(self._api._req(self._path(), **kw), self._api)
@@ -184,7 +184,7 @@ class Item(Resource):
         kw = dict(
             method='put' if self._json.get('id') else 'post',
             assert_status=200 if self._json.get('id') else 201,
-            files=dict(json=self.dumps(), file=''),
+            files=dict(json=self.dumps()),
             params={"syntax":syntax})
 
         if self._file:
