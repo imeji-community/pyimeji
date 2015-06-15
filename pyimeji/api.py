@@ -91,7 +91,7 @@ class Imeji(object):
                 log.error(
                     'got HTTP %s, expected HTTP %s' % (res.status_code, assert_status))
                 log.error(res.text[:1000])
-                raise AssertionError()
+                #raise AssertionError()
         if json_res:
             try:
                 res = res.json()
@@ -108,11 +108,11 @@ class Imeji(object):
         """
         return GET(self, name)
 
-    def create(self, rsc, **kw):
+    def create(self, rsc, syntax="",**kw):
         if isinstance(rsc, string_types):
             cls = getattr(resource, rsc.capitalize())
             rsc = cls(kw, self)
-        return rsc.save()
+        return rsc.save(syntax = syntax)
 
     def delete(self, rsc):
         return rsc.delete()

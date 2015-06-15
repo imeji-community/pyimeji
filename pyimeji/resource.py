@@ -134,8 +134,8 @@ class Collection(WithAuthor, DiscardReleaseMixin):
             d['id']: Item(d, self._api) for d in
             self._api._req(self._path('items'), params=dict(q=q) if q else {})}
 
-    def add_item(self, **kw):
-        return self._api.create('item', collectionId=self.id, **kw)
+    def add_item(self, syntax="",**kw):
+        return self._api.create('item', collectionId=self.id, syntax=syntax,**kw)
 
     def __setattr__(self, attr, value):
         if attr == 'profile':
@@ -179,12 +179,14 @@ class Item(Resource):
         assert os.path.exists(value)
         self.__file = value
 
-    def save(self):
+    def save(self, syntax=""):
         # FIXME: verify md5 sum upon creation of item from local file!
         kw = dict(
             method='put' if self._json.get('id') else 'post',
             assert_status=200 if self._json.get('id') else 201,
-            files=dict(json=self.dumps(), file=''))
+            files=dict(json=self.dumps(), file=''),
+            params={"syntax":syntax})
+
         if self._file:
             kw['files']['file'] = open(self._file, 'rb')
         return self.__class__(
