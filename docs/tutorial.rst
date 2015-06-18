@@ -54,7 +54,15 @@ In the following we use pyimeji to curate a data collection on an imeji instance
     >>> from pyimeji.api import Imeji
     >>> api = Imeji()
     >>> collection = api.create('collection', title='hello world!')
+    
+or: Getting a collection:
 
+.. code-block:: python
+
+    >>> from pyimeji.api import Imeji
+    >>> api = Imeji()
+    >>> collection = api.collection('id_of_collection')
+    
 2. Adding items:
 
 The imeji API supports three ways of associating an item with a file, all three of which
