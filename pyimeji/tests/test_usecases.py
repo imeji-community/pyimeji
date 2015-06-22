@@ -25,12 +25,8 @@ class TestUseCases(SetUp):
         assert(collection._json["title"]== tag)
 
     def test_create_collection_with_metadata_add_item(self):
-        url = "http://localhost:8080/imeji/rest/collections"
         default_profile = self.api.profile("default")
-        payload = {'title':  tag, 'profile': {'id': default_profile._json["id"], 'method':'reference'}}
-        r = requests.post(url,auth=HTTPBasicAuth('admin@imeji.org', 'admin'), data=json.dumps(payload))
-        r = r.json()
-        collection = self.api.collection(r["id"])
+        collection = self.api.create('collection', title = tag, profile={'id': default_profile._json["id"], 'method':'reference'})
         item = collection.add_item(_file = "../tests/resources/test.txt", metadata={"Title":"Test"})
         assert(item._json["metadata"]["Title"]=="Test")
 
