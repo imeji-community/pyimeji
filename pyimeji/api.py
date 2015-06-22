@@ -122,5 +122,6 @@ class Imeji(object):
             setattr(rsc, k, v)
         return rsc.save()
 
-    def patch(self, rsc, json ,**kw):
-        rsc.save2(json)
+    def patch(self, rsc, metadata={} ,**kw):
+        metadata = {"metadata" : metadata}
+        rsc.save2(metadata)
