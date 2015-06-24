@@ -68,7 +68,7 @@ class Resource(object):
     def __repr__(self):
         return self.dumps(sort_keys=True, indent=4, separators=(',', ': '))
 
-    def save(self):
+    def save(self, syntax=""):
         kw = dict(
             method='put' if self._json.get('id') else 'post',
             data=self.dumps(),
