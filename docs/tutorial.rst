@@ -104,5 +104,5 @@ Patch Item: (for an Item with metadata "Title")
 
 .. code-block:: python
 
-    >>> item = api.Item(id_of_item)
+    >>> item = api.item(id_of_item)
     >>> api.patch(item, metadata = {"Title" : "TestTitle"})
