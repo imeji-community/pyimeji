@@ -130,9 +130,9 @@ class Album(WithAuthor, DiscardReleaseMixin):
 
 class Collection(WithAuthor, DiscardReleaseMixin):
     def items(self, q=None):
-        return {
-            d['id']: Item(d, self._api) for d in
-            self._api._req(self._path('items'), params=dict(q=q) if q else {})}
+        return OrderedDict(
+            [(d['id'], Item(d, self._api)) for d in
+             self._api._req(self._path('items'), params=dict(q=q) if q else {})])
 
     def add_item(self, **kw):
         return self._api.create('item', collectionId=self.id, **kw)
@@ -144,12 +144,6 @@ class Collection(WithAuthor, DiscardReleaseMixin):
             elif isinstance(value, Profile):
                 value = dict(profileId=value.id, method="copy")
         Resource.__setattr__(self, attr, value)
-
-    def save(self):
-        if self._json.get('id'):
-            kw = dict(method='put', data=dict(json=self.dumps()))
-            return self.__class__(self._api._req(self._path(), **kw), self._api)
-        return Resource.save(self)
 
 
 class Profile(Resource, DiscardReleaseMixin):
