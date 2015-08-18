@@ -12,6 +12,12 @@ from pyimeji.config import Config
 log = logging.getLogger(__name__)
 
 
+class ImejiError(Exception):
+    def __init__(self, message, error):
+        super(ImejiError, self).__init__(message)
+        self.error = error.get('error') if isinstance(error, dict) else error
+
+
 class GET(object):
     """Handle GET requests.
 
@@ -86,18 +92,19 @@ class Imeji(object):
         """
         method = getattr(self.session, method.lower())
         res = method(self.service_url + '/rest' + path, **kw)
-        if assert_status:
-            if res.status_code != assert_status:  # pragma: no cover
-                log.error(
-                    'got HTTP %s, expected HTTP %s' % (res.status_code, assert_status))
-                log.error(res.text[:1000])
-                raise AssertionError()
+        status_code = res.status_code
         if json:
             try:
                 res = res.json()
             except ValueError:  # pragma: no cover
                 log.error(res.text[:1000])
-                pass
+                raise
+        if assert_status:
+            if status_code != assert_status:
+                log.error(
+                    'got HTTP %s, expected HTTP %s' % (status_code, assert_status))
+                log.error(res.text[:1000] if hasattr(res, 'text') else res)
+                raise ImejiError('Unexpected HTTP status code', res)
         return res
 
     def __getattr__(self, name):
