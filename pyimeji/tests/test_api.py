@@ -32,6 +32,7 @@ for path, method, status, content in [
     ('items/Wo1JI_oZNyrfxV_t', 'delete', 204, {}),
     ('items/Wo1JI_oZNyrfxV_t', 'get', 200, RESOURCES['item']),
     ('items/Wo1JI_oZNyrfxV_t', 'put', 200, RESOURCES['item']),
+    ('items/none', 'get', 404, jsondumps({"error": {"code": "1404"}})),
 
     ('collections', 'get', 200, jsondumps([{"id": "FKMxUpYdV9N2J4XG"}])),
     ('collections', 'post', 201, RESOURCES['collection']),
@@ -68,6 +69,15 @@ class ApiTest(TestCase):
         from pyimeji.api import Imeji
 
         self.api = Imeji(service_url=SERVICE_URL)
+
+    def test_error(self):
+        from pyimeji.api import ImejiError
+
+        with HTTMock(imeji):
+            try:
+                self.api.item('none')
+            except ImejiError as e:
+                self.assertEquals(e.error['code'], '1404')
 
     def test_album(self):
         with HTTMock(imeji):
