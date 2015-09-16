@@ -178,7 +178,7 @@ class Item(Resource):
         kw = dict(
             method='put' if self._json.get('id') else 'post',
             assert_status=200 if self._json.get('id') else 201,
-            files=dict(json=self.dumps(), file=''))
+            files=dict(json=self.dumps()))
         if self._file:
             kw['files']['file'] = open(self._file, 'rb')
         return self.__class__(
