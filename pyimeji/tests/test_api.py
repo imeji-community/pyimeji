@@ -112,6 +112,7 @@ class ApiTest(TestCase):
                 'collection',
                 title='cde',
                 profile=self.api.profile('dhV6XK39_UPrItK5'))
+            assert collection3
 
     def test_item(self):
         with HTTMock(imeji):
