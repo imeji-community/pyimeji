@@ -96,6 +96,8 @@ class Imeji(object):
         if json:
             try:
                 res = res.json()
+        	if "results" in res:
+			res = res["results"]
             except ValueError:  # pragma: no cover
                 log.error(res.text[:1000])
                 raise
