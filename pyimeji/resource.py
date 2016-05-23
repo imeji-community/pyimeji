@@ -175,7 +175,7 @@ class Item(Resource):
     def __setattr__(self, attr, value):
         if attr == 'metadata' and isinstance(value, string_types):
             # if a string is passed as metadata, it is interpreted as filename.
-            # NB 19.05.2016: this makes no sense and it changes the API use in unforseen manner
+            # NB 19.05.2016: this makes no sense and it changes the API use in unforeseen manner
             #value = jsonload(value)
             raise AttributeError(attr)
         Resource.__setattr__(self, attr, value)
