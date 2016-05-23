@@ -99,10 +99,4 @@ Now these items can be aggregated in albums:
     >>> album = api.create('album', title='hello world!')
     >>> album.link(*list(collection.items().keys()))
     
-    
-Patch Item: (for an Item with metadata "Title")
 
-.. code-block:: python
-
-    >>> item = api.item(id_of_item)
-    >>> api.patch(item, metadata = {"Title" : "TestTitle"})

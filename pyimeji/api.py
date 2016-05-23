@@ -7,9 +7,13 @@ from six import string_types
 
 from pyimeji import resource
 from pyimeji.config import Config
-import pickle
 
 log = logging.getLogger(__name__)
+
+class ImejiError(Exception):
+     def __init__(self, message, error):
+         super(ImejiError, self).__init__(message)
+         self.error = error.get('error') if isinstance(error, dict) else error
 
 class GET(object):
     """Handle GET requests.
@@ -100,12 +104,13 @@ class Imeji(object):
         method = getattr(self.session, method.lower())
 
         res = method(self.service_url + '/rest' + path, **kw)
+        status_code=res.status_code
         if assert_status:
             if res.status_code != assert_status:  # pragma: no cover
                 log.error(
                     'got HTTP %s, expected HTTP %s' % (res.status_code, assert_status))
-                log.error(res.text[:1000])
-                #raise AssertionError()
+                log.error(res.text[:1000] if hasattr(res, 'text') else res)
+                raise ImejiError('Unexpected HTTP status code', res)
         if json_res:
             try:
                 res = res.json()
