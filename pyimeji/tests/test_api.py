@@ -27,12 +27,14 @@ class Response(object):
 RESPONSES = {}
 
 for path, method, status, content in [
+    #('items', 'get', 200, jsondumps({"totalNumberOfResults" : 0, "numberOfResults" : 0, "offset" : 0, "size" : 20, "results" :[ {"id": "Wo1JI_oZNyrfxV_t"}]})),
     ('items', 'get', 200, jsondumps([{"id": "Wo1JI_oZNyrfxV_t"}])),
     ('items', 'post', 201, RESOURCES['item']),
     ('items/Wo1JI_oZNyrfxV_t', 'delete', 204, {}),
     ('items/Wo1JI_oZNyrfxV_t', 'get', 200, RESOURCES['item']),
     ('items/Wo1JI_oZNyrfxV_t', 'put', 200, RESOURCES['item']),
 
+    #('collections', 'get', 200, jsondumps({"totalNumberOfResults" : 0, "numberOfResults" : 0, "offset" : 0, "size" : 20, "results" :[ {"id": "FKMxUpYdV9N2J4XG"}]})),
     ('collections', 'get', 200, jsondumps([{"id": "FKMxUpYdV9N2J4XG"}])),
     ('collections', 'post', 201, RESOURCES['collection']),
     ('collections/FKMxUpYdV9N2J4XG/release', 'put', 200, {}),
@@ -42,6 +44,7 @@ for path, method, status, content in [
 
     ('profiles/dhV6XK39_UPrItK5', 'get', 200, RESOURCES['profile']),
 
+    #('albums', 'get', 200, jsondumps({"totalNumberOfResults" : 0, "numberOfResults" : 0, "offset" : 0, "size" : 20, "results" :[ {"id": "MAlOuZ4Y9iDR_"}]})),
     ('albums', 'get', 200, jsondumps([{"id": "MAlOuZ4Y9iDR_"}])),
     ('albums', 'post', 201, RESOURCES['album']),
     ('albums/MAlOuZ4Y9iDR_/release', 'put', 200, {}),
@@ -70,15 +73,15 @@ class ApiTest(TestCase):
         self.api = Imeji(service_url=SERVICE_URL)
 
     def test_album(self):
-        with HTTMock(imeji):
-            albums = self.api.albums()
-            album = self.api.album(list(albums.keys())[0])
-            assert 'Wo1JI_oZNyrfxV_t' in album.members()
-            assert album.id in album.member('Wo1JI_oZNyrfxV_t')._path()
-            album.release()
-            album.link()
-            album.unlink()
-            album.discard('test')
+         with HTTMock(imeji):
+             albums = self.api.albums()
+             album = self.api.album(list(albums.keys())[0])
+             assert 'Wo1JI_oZNyrfxV_t' in album.members()
+             assert album.id in album.member('Wo1JI_oZNyrfxV_t')._path()
+             album.release()
+             album.link()
+             album.unlink()
+             album.discard('test')
 
     def test_collection(self):
         with HTTMock(imeji):
@@ -91,17 +94,19 @@ class ApiTest(TestCase):
             self.assertIsInstance(collection.createdDate, datetime)
             self.assertEqual(collection.title, 'New title')
             collection.dumps()
-            repr(collection)
-            collection2 = self.api.create(
-                'collection', title='abc', profile='dhV6XK39_UPrItK5')
-            collection2.add_item(referenceUrl='http://example.org/')
-            assert collection2
             collection.release()
+            repr(collection)
+
+            collection2 = self.api.create('collection', title='abc', profile='dhV6XK39_UPrItK5')
+            assert collection2
             collection2.delete()
+
             collection3 = self.api.create(
                 'collection',
                 title='cde',
                 profile=self.api.profile('dhV6XK39_UPrItK5'))
+            assert collection3
+
 
     def test_item(self):
         with HTTMock(imeji):
@@ -115,7 +120,7 @@ class ApiTest(TestCase):
             self.assertRaises(AttributeError, setattr, item, 'id', 'abc')
             item2 = self.api.create('item', collectionId='abc', file=__file__)
             assert item2
-            item2.metadata = os.path.join(os.path.dirname(__file__), 'test.json')
+            item2.filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test.json')
             self.api.update(item2, filename='name.png')
             item2.delete()
             self.api.delete(item)
