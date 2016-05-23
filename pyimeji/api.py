@@ -7,16 +7,9 @@ from six import string_types
 
 from pyimeji import resource
 from pyimeji.config import Config
-
+import pickle
 
 log = logging.getLogger(__name__)
-
-
-class ImejiError(Exception):
-    def __init__(self, message, error):
-        super(ImejiError, self).__init__(message)
-        self.error = error.get('error') if isinstance(error, dict) else error
-
 
 class GET(object):
     """Handle GET requests.
@@ -53,11 +46,13 @@ class GET(object):
             raise ValueError('no id given')
         if id:
             id = '/' + id
+
         res = self.api._req('/%s%s' % (self.path, id), params=kw)
+
         if not self._list:
             return self.rsc(res, self.api)
-        return OrderedDict([(d['id'], d) for d in res])
 
+        return OrderedDict([(d["id"], d) for d in res ])
 
 class Imeji(object):
     """The client.
@@ -77,8 +72,10 @@ class Imeji(object):
         self.session = requests.Session()
         if user and password:
             self.session.auth = (user, password)
+        #initialize the request query
+        self.total_number_of_results=self.number_of_results=self.offset=self.size = None
 
-    def _req(self, path, method='get', json=True, assert_status=200, **kw):
+    def _req(self, path, method='get', json_res=True, assert_status=200, **kw):
         """Make a request to the API of an imeji instance.
 
         :param path: HTTP path.
@@ -90,23 +87,37 @@ class Imeji(object):
         :return: The return value of the function of the requests library or a decoded \
         JSON object/array.
         """
+        #Method GET parameter validation
+        #if parameters are there
+        if method=="get" and kw.get("params") and str(path).endswith("s"):
+            reqParams=kw.get("params")
+            if reqParams:
+                canParams={"size", "offset", "q"}
+                if not (canParams >= set(reqParams.keys()) ):
+                    diff= set(reqParams) - set(canParams)
+                    raise ValueError("Wrong set of parameters in the request "+str(set(reqParams) - set(canParams)))
+
         method = getattr(self.session, method.lower())
+
         res = method(self.service_url + '/rest' + path, **kw)
-        status_code = res.status_code
-        if json:
+        if assert_status:
+            if res.status_code != assert_status:  # pragma: no cover
+                log.error(
+                    'got HTTP %s, expected HTTP %s' % (res.status_code, assert_status))
+                log.error(res.text[:1000])
+                #raise AssertionError()
+        if json_res:
             try:
                 res = res.json()
-        	if "results" in res:
-			res = res["results"]
+                if "results" in res:
+                    self.total_number_of_results=res["totalNumberOfResults"]
+                    self.number_of_results=res["numberOfResults"]
+                    self.offset = res["offset"]
+                    self.size = res["size"]
+                    res = res["results"]
             except ValueError:  # pragma: no cover
                 log.error(res.text[:1000])
-                raise
-        if assert_status:
-            if status_code != assert_status:
-                log.error(
-                    'got HTTP %s, expected HTTP %s' % (status_code, assert_status))
-                log.error(res.text[:1000] if hasattr(res, 'text') else res)
-                raise ImejiError('Unexpected HTTP status code', res)
+                pass
         return res
 
     def __getattr__(self, name):
@@ -130,3 +141,7 @@ class Imeji(object):
         for k, v in kw.items():
             setattr(rsc, k, v)
         return rsc.save()
+
+#    def patch(self, rsc, metadata={} ,**kw):
+#        metadata = {"metadata" : metadata}
+#        rsc.save2(metadata)

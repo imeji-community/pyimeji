@@ -54,7 +54,15 @@ In the following we use pyimeji to curate a data collection on an imeji instance
     >>> from pyimeji.api import Imeji
     >>> api = Imeji()
     >>> collection = api.create('collection', title='hello world!')
+    
+or: Getting a collection:
 
+.. code-block:: python
+
+    >>> from pyimeji.api import Imeji
+    >>> api = Imeji()
+    >>> collection = api.collection('id_of_collection')
+    
 2. Adding items:
 
 The imeji API supports three ways of associating an item with a file, all three of which
@@ -90,3 +98,11 @@ Now these items can be aggregated in albums:
 
     >>> album = api.create('album', title='hello world!')
     >>> album.link(*list(collection.items().keys()))
+    
+    
+Patch Item: (for an Item with metadata "Title")
+
+.. code-block:: python
+
+    >>> item = api.item(id_of_item)
+    >>> api.patch(item, metadata = {"Title" : "TestTitle"})

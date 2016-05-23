@@ -52,7 +52,6 @@ class Resource(object):
         #
         # TODO: once this is available, resolve users to proper objects upon access!
         #
-
         return res
 
     def __setattr__(self, attr, value):
@@ -88,7 +87,6 @@ class WithAuthor(Resource):
             d['contributors'] = [
                 {
                     'familyName': 'none',
-                    'role': 'author',
                     'organizations': [{'name': 'none'}]}]
         Resource.__init__(self, d, api)
 
@@ -129,10 +127,11 @@ class Album(WithAuthor, DiscardReleaseMixin):
 
 
 class Collection(WithAuthor, DiscardReleaseMixin):
-    def items(self, q=None):
-        return OrderedDict(
-            [(d['id'], Item(d, self._api)) for d in
-             self._api._req(self._path('items'), params=dict(q=q) if q else {})])
+    def items(self, **kw):
+        return {
+            d['id']: Item(d, self._api) for d in
+            self._api._req(self._path('items'), params=kw)}
+        #self._api._req(self._path('items'), params=dict(q=q) if q else {})}
 
     def add_item(self, **kw):
         return self._api.create('item', collectionId=self.id, **kw)
@@ -144,6 +143,17 @@ class Collection(WithAuthor, DiscardReleaseMixin):
             elif isinstance(value, Profile):
                 value = dict(profileId=value.id, method="copy")
         Resource.__setattr__(self, attr, value)
+
+    def save(self):
+        if self._json.get('id'):
+            kw = dict(method='put', data=dict(json=self.dumps()))
+            return self.__class__(self._api._req(self._path(), **kw), self._api)
+        return Resource.save(self)
+
+    def item_template(self):
+        #return self._api._req(self._path('items/template'), json=True, method="get")
+        json_item= self._api._req(self._path('items/template'))
+        return Item(json_item, self._api._req(self._path('items')))
 
 
 class Profile(Resource, DiscardReleaseMixin):
@@ -165,7 +175,9 @@ class Item(Resource):
     def __setattr__(self, attr, value):
         if attr == 'metadata' and isinstance(value, string_types):
             # if a string is passed as metadata, it is interpreted as filename.
-            value = jsonload(value)
+            # NB 19.05.2016: this makes no sense and it changes the API use in unforseen manner
+            #value = jsonload(value)
+            raise AttributeError(attr)
         Resource.__setattr__(self, attr, value)
 
     @_file.setter
@@ -179,8 +191,19 @@ class Item(Resource):
             method='put' if self._json.get('id') else 'post',
             assert_status=200 if self._json.get('id') else 201,
             files=dict(json=self.dumps()))
+
         if self._file:
             kw['files']['file'] = open(self._file, 'rb')
+
+        return self.__class__(self._api._req(self._path(), **kw), self._api)
+
+    def save2(self, json):
+        # FIXME: verify md5 sum upon creation of item from local file!
+        kw = dict(
+            method = 'patch',
+            assert_status=200 if self._json.get('id') else 201,
+            json = json
+        )
         return self.__class__(
             self._api._req(self._path(), **kw),
             self._api)
