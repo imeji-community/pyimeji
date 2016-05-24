@@ -1,16 +1,15 @@
 # coding=utf8
 from __future__ import unicode_literals
-from unittest import TestCase
-from datetime import datetime
+
 import os
+from datetime import datetime
+from unittest import TestCase
 
 from httmock import all_requests, response, HTTMock
 
 from pyimeji.util import pkg_path, jsonload, jsondumps
 
-
 SERVICE_URL = 'http://example.org'
-
 
 RESOURCES = {
     name: jsonload(pkg_path('tests', 'resources', '%s.json' % name))
@@ -27,14 +26,11 @@ class Response(object):
 RESPONSES = {}
 
 for path, method, status, content in [
-    #('items', 'get', 200, jsondumps({"totalNumberOfResults" : 0, "numberOfResults" : 0, "offset" : 0, "size" : 20, "results" :[ {"id": "Wo1JI_oZNyrfxV_t"}]})),
     ('items', 'get', 200, jsondumps([{"id": "Wo1JI_oZNyrfxV_t"}])),
     ('items', 'post', 201, RESOURCES['item']),
     ('items/Wo1JI_oZNyrfxV_t', 'delete', 204, {}),
     ('items/Wo1JI_oZNyrfxV_t', 'get', 200, RESOURCES['item']),
     ('items/Wo1JI_oZNyrfxV_t', 'put', 200, RESOURCES['item']),
-
-    #('collections', 'get', 200, jsondumps({"totalNumberOfResults" : 0, "numberOfResults" : 0, "offset" : 0, "size" : 20, "results" :[ {"id": "FKMxUpYdV9N2J4XG"}]})),
     ('collections', 'get', 200, jsondumps([{"id": "FKMxUpYdV9N2J4XG"}])),
     ('collections', 'post', 201, RESOURCES['collection']),
     ('collections/FKMxUpYdV9N2J4XG/release', 'put', 200, {}),
@@ -44,14 +40,13 @@ for path, method, status, content in [
 
     ('profiles/dhV6XK39_UPrItK5', 'get', 200, RESOURCES['profile']),
 
-    #('albums', 'get', 200, jsondumps({"totalNumberOfResults" : 0, "numberOfResults" : 0, "offset" : 0, "size" : 20, "results" :[ {"id": "MAlOuZ4Y9iDR_"}]})),
     ('albums', 'get', 200, jsondumps([{"id": "MAlOuZ4Y9iDR_"}])),
     ('albums', 'post', 201, RESOURCES['album']),
     ('albums/MAlOuZ4Y9iDR_/release', 'put', 200, {}),
     ('albums/MAlOuZ4Y9iDR_/discard', 'put', 200, {}),
     ('albums/MAlOuZ4Y9iDR_', 'delete', 204, {}),
     ('albums/MAlOuZ4Y9iDR_', 'get', 200, RESOURCES['album']),
-    ('albums/MAlOuZ4Y9iDR_/members', 'get', 200, jsondumps([RESOURCES['item']])),
+    ('albums/MAlOuZ4Y9iDR_/items', 'get', 200, jsondumps([RESOURCES['item']])),
     ('albums/MAlOuZ4Y9iDR_/members/link', 'put', 200, {}),
     ('albums/MAlOuZ4Y9iDR_/members/unlink', 'put', 204, {}),
 ]:
@@ -73,15 +68,15 @@ class ApiTest(TestCase):
         self.api = Imeji(service_url=SERVICE_URL)
 
     def test_album(self):
-         with HTTMock(imeji):
-             albums = self.api.albums()
-             album = self.api.album(list(albums.keys())[0])
-             assert 'Wo1JI_oZNyrfxV_t' in album.members()
-             assert album.id in album.member('Wo1JI_oZNyrfxV_t')._path()
-             album.release()
-             album.link()
-             album.unlink()
-             album.discard('test')
+        with HTTMock(imeji):
+            albums = self.api.albums()
+            album = self.api.album(list(albums.keys())[0])
+            assert 'Wo1JI_oZNyrfxV_t' in album.members()
+            assert album.id in album.member('Wo1JI_oZNyrfxV_t')._path()
+            album.release()
+            album=self.api.album(album.id)
+            album.link(['Wo1JI_oZNyrfxV_t'])
+            album.discard('test comment')
 
     def test_collection(self):
         with HTTMock(imeji):
@@ -106,7 +101,6 @@ class ApiTest(TestCase):
                 title='cde',
                 profile=self.api.profile('dhV6XK39_UPrItK5'))
             assert collection3
-
 
     def test_item(self):
         with HTTMock(imeji):
@@ -136,6 +130,6 @@ class ApiTest(TestCase):
 
         with HTTMock(imeji):
             res = main(
-                ('--service=%s retrieve collection FKMxUpYdV9N2J4XG' % SERVICE_URL)
-                .split())
+                    ('--service=%s retrieve collection FKMxUpYdV9N2J4XG' % SERVICE_URL)
+                    .split())
             self.assertIsInstance(res, Collection)
