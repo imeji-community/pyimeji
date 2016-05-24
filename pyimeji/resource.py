@@ -5,8 +5,6 @@ from collections import OrderedDict
 from six import string_types
 from dateutil.parser import parse
 
-from pyimeji.util import jsonload
-
 
 class ReadOnlyAttributeError(AttributeError):
     pass
@@ -44,7 +42,7 @@ class Resource(object):
         try:
             res = self._json[attr]
         except KeyError:
-            raise AttributeError(attr)
+                raise AttributeError(attr)
 
         if attr.endswith('Date'):
             res = parse(res)
@@ -78,7 +76,7 @@ class Resource(object):
 
     def delete(self):
         return self._api._req(
-            self._path(), method='delete', assert_status=204, json=False)
+            self._path(), method='delete', assert_status=204, json_res=False)
 
 
 class WithAuthor(Resource):
@@ -97,18 +95,17 @@ class DiscardReleaseMixin(object):
             self._path('discard'),
             data=dict(id=self.id, discardComment=comment),
             method='put',
-            assert_status=200,
-            json=False)
+            assert_status=200, json_res=False )
 
     def release(self):
         return self._api._req(
-            self._path('release'), method='put', assert_status=200, json=False)
+            self._path('release'), method='put', assert_status=200, json_res=False)
 
 
 class Album(WithAuthor, DiscardReleaseMixin):
     def members(self):
         return OrderedDict(
-            [(d['id'], d) for d in self._api._req(self._path('members'))])
+            [(d['id'], d) for d in self._api._req(self._path('items'))])
 
     def member(self, id):
         for id_, d in self.members().items():
@@ -117,7 +114,7 @@ class Album(WithAuthor, DiscardReleaseMixin):
 
     def _act_on_members(self, op, *ids, **kw):
         return self._api._req(
-            self._path('members', op), method='put', data=json.dumps(ids), **kw)
+            self._path('members', op), method='put', data=json.dumps(*ids), **kw)
 
     def link(self, *ids):
         return self._act_on_members('link', *ids)
@@ -131,7 +128,6 @@ class Collection(WithAuthor, DiscardReleaseMixin):
         return {
             d['id']: Item(d, self._api) for d in
             self._api._req(self._path('items'), params=kw)}
-        #self._api._req(self._path('items'), params=dict(q=q) if q else {})}
 
     def add_item(self, **kw):
         return self._api.create('item', collectionId=self.id, **kw)
@@ -146,12 +142,17 @@ class Collection(WithAuthor, DiscardReleaseMixin):
 
     def save(self):
         if self._json.get('id'):
-            kw = dict(method='put', data=dict(json=self.dumps()))
+            kw = dict(method='put' if self._json.get('id') else 'post', data=self.dumps(), headers={'Content-Type': 'application/json'})
             return self.__class__(self._api._req(self._path(), **kw), self._api)
         return Resource.save(self)
 
+
     def item_template(self):
         #return self._api._req(self._path('items/template'), json=True, method="get")
+        """
+
+        :rtype: Item
+        """
         json_item= self._api._req(self._path('items/template'))
         return Item(json_item, self._api._req(self._path('items')))
 

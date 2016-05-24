@@ -10,10 +10,12 @@ from pyimeji.config import Config
 
 log = logging.getLogger(__name__)
 
+
 class ImejiError(Exception):
-     def __init__(self, message, error):
-         super(ImejiError, self).__init__(message)
-         self.error = error.get('error') if isinstance(error, dict) else error
+    def __init__(self, message, error):
+        super(ImejiError, self).__init__(message)
+        self.error = error.get('error') if isinstance(error, dict) else error
+
 
 class GET(object):
     """Handle GET requests.
@@ -24,6 +26,7 @@ class GET(object):
     - to fetch lists of object references (which are returned as `OrderedDict` mapping
       object `id` to additional metadata present in the response).
     """
+
     def __init__(self, api, name):
         """Initialize a handler.
 
@@ -56,18 +59,25 @@ class GET(object):
         if not self._list:
             return self.rsc(res, self.api)
 
-        return OrderedDict([(d["id"], d) for d in res ])
+        return OrderedDict([(d["id"], d) for d in res])
+
 
 class Imeji(object):
     """The client.
 
-    >>> api = Imeji(service_url='http://demo.imeji.org/imeji/')
-    >>> collection_id = list(api.collections().keys())[0]
-    >>> collection = api.collection(collection_id)
-    >>> collection = api.create('collection', title='the new collection')
-    >>> item = collection.add_item(fetchUrl='http://example.org')
-    >>> item.delete()
+         api = Imeji(service_url='http://demo.imeji.org/imeji/')
+         collection_id = list(api.collections().keys())[0]
+         collection = api.collection(collection_id)
+         collection = api.create('collection', title='the new collection')
+
+         collection.title="the new title"
+         collection.save()
+
+         item = collection.add_item(fetchUrl='http://example.org')
+         item.delete()
+
     """
+
     def __init__(self, cfg=None, service_url=None):
         self.cfg = cfg or Config()
         self.service_url = service_url or self.cfg.get('service', 'url')
@@ -76,8 +86,8 @@ class Imeji(object):
         self.session = requests.Session()
         if user and password:
             self.session.auth = (user, password)
-        #initialize the request query
-        self.total_number_of_results=self.number_of_results=self.offset=self.size = None
+        # initialize the request query
+        self.total_number_of_results = self.number_of_results = self.offset = self.size = None
 
     def _req(self, path, method='get', json_res=True, assert_status=200, **kw):
         """Make a request to the API of an imeji instance.
@@ -91,20 +101,17 @@ class Imeji(object):
         :return: The return value of the function of the requests library or a decoded \
         JSON object/array.
         """
-        #Method GET parameter validation
-        #if parameters are there
-        if method=="get" and kw.get("params") and str(path).endswith("s"):
-            reqParams=kw.get("params")
-            if reqParams:
-                canParams={"size", "offset", "q"}
-                if not (canParams >= set(reqParams.keys()) ):
-                    diff= set(reqParams) - set(canParams)
-                    raise ValueError("Wrong set of parameters in the request "+str(set(reqParams) - set(canParams)))
+        # Method GET parameter validation
+        # if parameters are there
+        if method == "get" and kw.get("params") and str(path).endswith("s"):
+            req_params = kw.get("params")
+            if req_params:
+                can_params = {"size", "offset", "q"}
+                if not (can_params >= set(req_params.keys())):
+                    raise ValueError("Wrong set of parameters in the request " + str(set(req_params) - set(can_params)))
 
         method = getattr(self.session, method.lower())
-
         res = method(self.service_url + '/rest' + path, **kw)
-        status_code=res.status_code
         if assert_status:
             if res.status_code != assert_status:  # pragma: no cover
                 log.error(
@@ -115,8 +122,8 @@ class Imeji(object):
             try:
                 res = res.json()
                 if "results" in res:
-                    self.total_number_of_results=res["totalNumberOfResults"]
-                    self.number_of_results=res["numberOfResults"]
+                    self.total_number_of_results = res["totalNumberOfResults"]
+                    self.number_of_results = res["numberOfResults"]
                     self.offset = res["offset"]
                     self.size = res["size"]
                     res = res["results"]
@@ -147,6 +154,6 @@ class Imeji(object):
             setattr(rsc, k, v)
         return rsc.save()
 
-#    def patch(self, rsc, metadata={} ,**kw):
+# def patch(self, rsc, metadata={} ,**kw):
 #        metadata = {"metadata" : metadata}
 #        rsc.save2(metadata)
