@@ -158,7 +158,24 @@ class Collection(WithAuthor, DiscardReleaseMixin):
 
 
 class Profile(Resource, DiscardReleaseMixin):
-    pass
+    def item_template(self):
+        # return self._api._req(self._path('/template'), json=True, method="get")
+        """
+
+        :rtype: Item
+        """
+        json_item = self._api._req(self._path('template'))
+        return Item(json_item, self._api._req(self._path('template')))
+
+    def copy(self):
+        return Profile(
+            self._api._req(self._path(batch=True),
+                           method='post',
+                           json_res=True,
+                           assert_status=201,
+                           data=self.dumps()),
+            self._api._req(self._path()))
+
 
 
 class Item(Resource):

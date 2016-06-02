@@ -16,7 +16,6 @@ class ImejiError(Exception):
         super(ImejiError, self).__init__(message)
         self.error = error.get('error') if isinstance(error, dict) else error
 
-
 class GET(object):
     """Handle GET requests.
 
@@ -81,6 +80,16 @@ class Imeji(object):
     def __init__(self, cfg=None, service_url=None):
         self.cfg = cfg or Config()
         self.service_url = service_url or self.cfg.get('service', 'url')
+
+        # check if Imeji instance is running and notify the user
+        try:
+            requests.head(self.service_url+'/rest')
+        except:
+            print("WARNING : The REST Interface of Imeji at {rest_service} is not available or there is another problem"
+                  ", check if the service is running under {imeji_service}".
+                  format(imeji_service=self.service_url, rest_service=self.service_url+'/rest'))
+            raise
+
         user = self.cfg.get('service', 'user', default=None)
         password = self.cfg.get('service', 'password', default=None)
         self.session = requests.Session()

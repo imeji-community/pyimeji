@@ -2,7 +2,7 @@
 Command Line Interface
 ----------------------
 
-*pyimeji*'s command line interface is a program named "imeji".
+*pyimeji*'s command line interface for a program named "imeji".
 In the following examples ``$`` denotes a shell prompt.
 Successful execution of a command will return ``0`` as exit status.
 

@@ -1,4 +1,4 @@
-from pyimeji.api import Imeji
+from pyimeji.api import Imeji, ImejiError
 import os
 import unittest
 
@@ -10,6 +10,8 @@ defaultFilename = "<change-the-file-name-here-or-provide-separate-field-for-fetc
 class SetUp(unittest.TestCase):
     def setUp(self):
         self.api = Imeji()
+        # if not self.api
+
 
     def tearDown(self):
         # delete all collections with title  tag"
@@ -228,6 +230,62 @@ class TestUseCases(SetUp):
         album.unlink(my_list)
         self.assertEqual(len(album.members()), 0)
 
+    def test_delete_default_profiles(self):
+        default_profiles = self.api.profiles(size=500)
+        for prof in default_profiles:
+            if default_profiles[prof]["default"] == True and default_profiles[prof]["status"] != "RELEASED":
+                self.api.delete(self.api.profile(prof))
+
+    def test_copy_default_profiles(self):
+        default_profile = self.api.profile("default")
+        default_profile.title=default_profile.title+" A COPY OF THE DEFAULT PROFILE "
+        new_profile = None
+
+        with self.assertRaises(ImejiError):
+            new_profile = default_profile.copy()
+
+        default_profile.default=False
+        new_profile=default_profile.copy()
+        self.assertNotEquals(default_profile.id, new_profile.id)
+        self.assertEquals(new_profile.default, False)
+        default_profile=self.api.profile("default")
+        self.assertEquals(new_profile.title, default_profile.title+" A COPY OF THE DEFAULT PROFILE ")
+        self.assertEquals(len(new_profile.statements), len(default_profile.statements))
+
+
+    def test_delete_profiles(self):
+        profile = self.api.create("profile", title="delete profile test")
+        collection = self.api.create('collection', title=tag,
+                                     profile={'id': profile.id, 'method': 'reference'})
+        with self.assertRaises(ImejiError):
+            profile.delete()
+
+        collection.delete()
+        profile.delete
+
+        with self.assertRaises(ImejiError):
+            self.api.profile(profile.id)
+
+        with self.assertRaises(ImejiError):
+            self.api.collection(collection.id)
+
+
+    def test_release_withdaw_delete_profiles(self):
+        profile = self.api.create("profile", title="discard profile test pyimeji")
+        collection = self.api.create('collection', title=tag,
+                                     profile={'id': profile.id, 'method': 'reference'})
+        profile.release()
+
+        with self.assertRaises(ImejiError):
+            profile.delete()
+
+        collection.delete()
+
+        with self.assertRaises(ImejiError):
+            profile.delete()
+
+        profile.discard("discard profile test pyimeji")
 
 if __name__ == '__main__':
     unittest.main()
+

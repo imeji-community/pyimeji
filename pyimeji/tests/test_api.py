@@ -39,6 +39,8 @@ for path, method, status, content in [
     ('collections/FKMxUpYdV9N2J4XG/items', 'get', 200, jsondumps([RESOURCES['item']])),
 
     ('profiles/dhV6XK39_UPrItK5', 'get', 200, RESOURCES['profile']),
+    ('profiles', 'post', 201, RESOURCES['profile']),
+    ('profiles/dhV6XK39_UPrItK5', 'delete', 204, {}),
 
     ('albums', 'get', 200, jsondumps([{"id": "MAlOuZ4Y9iDR_"}])),
     ('albums', 'post', 201, RESOURCES['album']),
@@ -122,7 +124,13 @@ class ApiTest(TestCase):
     def test_profile(self):
         with HTTMock(imeji):
             profile = self.api.profile('dhV6XK39_UPrItK5')
-            self.assertEqual(profile.title, 'Research Data')
+            self.assertEqual(profile.title, 'METADATA PROFILE VIA REST')
+            profile.title="NEW PROFILE TITLE"
+            profile1= profile.copy()
+            assert profile1
+            profile.delete()
+
+
 
     def test_cli(self):
         from pyimeji.cli import main
