@@ -77,18 +77,18 @@ class Imeji(object):
 
     """
 
-    def __init__(self, cfg=None, service_url=None):
+    def __init__(self, cfg=None, service_url=None, service_mode=None):
         self.cfg = cfg or Config()
         self.service_url = service_url or self.cfg.get('service', 'url')
+        self.service_mode_private = False or ( self.cfg.get('service', 'mode')=='private' or service_mode=='private')
 
         # check if Imeji instance is running and notify the user
         try:
-            requests.head(self.service_url+'/rest')
-        except:
-            print("WARNING : The REST Interface of Imeji at {rest_service} is not available or there is another problem"
+            res_head= requests.head(self.service_url)
+        except Exception as e:
+            raise Exception("WARNING : The REST Interface of Imeji at {rest_service} is not available or there is another problem"
                   ", check if the service is running under {imeji_service}".
-                  format(imeji_service=self.service_url, rest_service=self.service_url+'/rest'))
-            raise
+                  format(imeji_service=self.service_url, rest_service=self.service_url+'/rest'), e)
 
         user = self.cfg.get('service', 'user', default=None)
         password = self.cfg.get('service', 'password', default=None)
@@ -126,7 +126,7 @@ class Imeji(object):
                 log.error(
                     'got HTTP %s, expected HTTP %s' % (res.status_code, assert_status))
                 log.error(res.text[:1000] if hasattr(res, 'text') else res)
-                raise ImejiError('Unexpected HTTP status code', res)
+                raise ImejiError('Unexpected HTTP status code', res )
         if json_res:
             try:
                 res = res.json()

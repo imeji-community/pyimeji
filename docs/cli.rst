@@ -2,7 +2,14 @@
 Command Line Interface
 ----------------------
 
-*pyimeji*'s command line interface for a program named "imeji".
+*pyimeji*'s command line interface working against
+the "imeji" open source software
+for management of research data and its JSON-based REST API.
+
+Details: http://imeji.org
+Source:  https://github.com/imeji-community/imeji
+REST-API documentation: https://github.com/imeji-community/imeji/wiki/A_Home-imeji-API-V1
+
 In the following examples ``$`` denotes a shell prompt.
 Successful execution of a command will return ``0`` as exit status.
 

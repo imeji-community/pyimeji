@@ -35,12 +35,17 @@ This file can be customized e.g. to provide connection info or to set the loggin
     url = http://localhost/imeji
     user = ****
     password = ****
+    service_mode=
 
 .. note::
 
     The logging level will be passed on to the logger for the *requests* library, too. So
     setting it to ``DEBUG`` will add information about the HTTP connection to the log.
 
+    The service_mode is additional setting, which needs to be synchronized with the service_mode of the running imeji instance.
+    (at present, there is no possibility to get it from the rest interface).
+    If the imeji instance runs in a private mode, then the service_mode in this configuration file shall be set to value of "private"
+    If the imeji instance runs in a public mode, you do not need to set-up the service_mode
 
 A data curation workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -54,7 +59,14 @@ In the following we use pyimeji to curate a data collection on an imeji instance
     >>> from pyimeji.api import Imeji
     >>> api = Imeji()
     >>> collection = api.create('collection', title='hello world!')
-    
+
+ 1.1. Creating a collection with the default metadata profile referenced
+ .. code-block:: python
+
+    >>> from pyimeji.api import Imeji
+    >>> api = Imeji()
+    >>> collection = api.create('collection', title='hello world!', profile={'id': api.profile('default').id, 'method': 'reference'}
+
 or: Getting a collection:
 
 .. code-block:: python
@@ -74,7 +86,7 @@ you can use with *pyimeji*, too:
     >>> item2 = collection.add_item(fetchUrl='http://example.org/')
     >>> item3 = collection.add_item(referenceUrl='http://example.org')
 
-3. Release:
+3. Release a collection and all items:
 
 Once a collection has items, it may be released:
 
