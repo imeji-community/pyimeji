@@ -1,38 +1,166 @@
 {
-        "id": "dhV6XK39_UPrItK5",
-        "createdBy": {
-            "fullname": "Saquet, Bastien",
-            "userId": "zhcQKsMR0A9SiC6x"
+  "id": "dhV6XK39_UPrItK5",
+  "createdBy": {
+    "fullname": "Admin, Imejity",
+    "userId": "Bsz2j5Jg5lA86BBx"
+  },
+  "modifiedBy": {
+    "fullname": "Admin, Imejity",
+    "userId": "Bsz2j5Jg5lA86BBx"
+  },
+  "createdDate": "2016-05-25T09:53:46 +0200",
+  "modifiedDate": "2016-05-25T10:01:41 +0200",
+  "versionDate": "",
+  "status": "PENDING",
+  "version": 0,
+  "discardComment": "",
+  "title": "METADATA PROFILE VIA REST",
+  "description": "Default metadata profile description via REST",
+  "statements": [
+    {
+      "id": "cMTq50CyWVNJCxew",
+      "pos": 0,
+      "type": "http://imeji.org/terms/metadata#text",
+      "labels": [
+        {
+          "value": "TitleSOMENEW",
+          "lang": "en"
+        }
+      ],
+      "vocabulary": "http://pubman.mpdl.mpg.de/cone/persons/query?format=json&n=10&m=full&q=",
+      "literalConstraints": [],
+      "minOccurs": "0",
+      "maxOccurs": "1",
+      "parentStatementId": null,
+      "useInPreview": true
+    },
+    {
+      "id": "O8bn6LWDfZ18er5k",
+      "pos": 1,
+      "type": "http://imeji.org/terms/metadata#text",
+      "labels": [
+        {
+          "value": "New Metadata predefined value",
+          "lang": "en"
+        }
+      ],
+      "vocabulary": null,
+      "literalConstraints": [
+        {
+          "value": "A"
         },
-        "modifiedBy": {
-            "fullname": "Saquet, Bastien",
-            "userId": "zhcQKsMR0A9SiC6x"
+        {
+          "value": "B"
         },
-        "createdDate": "2014-10-09T13:01:49 +0200",
-        "modifiedDate": "2014-11-20T10:31:13 +0100",
-        "versionDate": "2014-10-16T11:15:54 +0200",
-        "status": "RELEASED",
-        "version": 0,
-        "discardComment": "",
-        "title": "Research Data",
-        "description": "Test for research data",
-        "statements": [
-            {
-                "id": "xx9HntRF7GuFIJA",
-                "pos": 0,
-                "type": "http://imeji.org/terms/metadata#text",
-                "labels": [
-                    {
-                        "value": "titel",
-                        "lang": "en"
-                    }
-                ],
-                "vocabulary": null,
-                "literalConstraints": [],
-                "minOccurs": "0",
-                "maxOccurs": "1",
-                "parentStatementId": null,
-                "useInPreview": true
-            }
-        ]
+        {
+          "value": "C"
+        }
+      ],
+      "minOccurs": "0",
+      "maxOccurs": "1",
+      "parentStatementId": null,
+      "useInPreview": true
+    },
+    {
+      "id": "UsegT84LFDZT3Ls9",
+      "pos": 2,
+      "type": "http://imeji.org/terms/metadata#publication",
+      "labels": [
+        {
+          "value": "Publicatino statement",
+          "lang": "en"
+        }
+      ],
+      "vocabulary": null,
+      "literalConstraints": [],
+      "minOccurs": "0",
+      "maxOccurs": "1",
+      "parentStatementId": "O8bn6LWDfZ18er5k",
+      "useInPreview": true
+    },
+    {
+      "id": "k0HjbhxKn8MQQTe7",
+      "pos": 3,
+      "type": "http://imeji.org/terms/metadata#date",
+      "labels": [
+        {
+          "value": "My new Date",
+          "lang": "en"
+        }
+      ],
+      "vocabulary": null,
+      "literalConstraints": [],
+      "minOccurs": "0",
+      "maxOccurs": "1",
+      "parentStatementId": "UsegT84LFDZT3Ls9",
+      "useInPreview": true
+    },
+    {
+      "id": "SWb0vNzNsP7_YuN",
+      "pos": 4,
+      "type": "http://imeji.org/terms/metadata#number",
+      "labels": [
+        {
+          "value": "Number predefined valzue",
+          "lang": "en"
+        }
+      ],
+      "vocabulary": null,
+      "literalConstraints": [
+        {
+          "value": "3"
+        },
+        {
+          "value": "4"
+        }
+      ],
+      "minOccurs": "0",
+      "maxOccurs": "1",
+      "parentStatementId": null,
+      "useInPreview": true
+    },
+    {
+      "id": "rTG3i5FgdDpWw2Qs",
+      "pos": 5,
+      "type": "http://imeji.org/terms/metadata#license",
+      "labels": [
+        {
+          "value": "License",
+          "lang": "en"
+        },
+        {
+          "value": "LicenseINGESTCHANGE",
+          "lang": "de"
+        }
+      ],
+      "vocabulary": "http://api.creativecommons.org/rest/1.5/simple/chooser?locale=",
+      "literalConstraints": [],
+      "minOccurs": "0",
+      "maxOccurs": "1",
+      "parentStatementId": null,
+      "useInPreview": true
+    },
+    {
+      "id": "9vydEpNYVytig4Et",
+      "pos": 6,
+      "type": "http://imeji.org/terms/metadata#text",
+      "labels": [
+        {
+          "value": "CommentINGEST",
+          "lang": "en"
+        },
+        {
+          "value": "Comment",
+          "lang": "de"
+        }
+      ],
+      "vocabulary": "http://pubman.mpdl.mpg.de/cone/iso639-3/query?format=json&n=10&m=full&q=",
+      "literalConstraints": [],
+      "minOccurs": "0",
+      "maxOccurs": "1",
+      "parentStatementId": null,
+      "useInPreview": true
+    }
+  ],
+  "default": false
 }
