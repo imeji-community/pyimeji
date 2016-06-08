@@ -21,18 +21,18 @@ def read(fname):
 
 setup(
     name='pyimeji',
-    version="1.1.1",
+    version="1.2.0",
     description='A python wrapper for the imeji API',
     long_description=read("README.rst"),
-    author='Robert Forkel',
-    author_email='xrotwang@googlemail.com',
+    author='Robert Forkel & Max Planck Digital Library (MPDL)',
+    author_email='support@imeji.org',
     url='https://github.com/imeji-community/pyimeji',
     install_requires=requires,
     license=read("LICENSE"),
     zip_safe=False,
     keywords='imeji',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',

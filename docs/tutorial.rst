@@ -56,12 +56,13 @@ In the following we use pyimeji to curate a data collection on an imeji instance
 
 .. code-block:: python
 
-    >>> from pyimeji.api import Imeji
-    >>> api = Imeji()
-    >>> collection = api.create('collection', title='hello world!')
+     >>> from pyimeji.api import Imeji
+     >>> api = Imeji()
+     >>> collection = api.create('collection', title='hello world!')
 
- 1.1. Creating a collection with the default metadata profile referenced
- .. code-block:: python
+1.1. Creating a collection with the default metadata profile referenced
+
+.. code-block:: python
 
     >>> from pyimeji.api import Imeji
     >>> api = Imeji()
