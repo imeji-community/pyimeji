@@ -21,7 +21,7 @@ report bugs, but maybe even fix them and submit pull requests.
 Configuration
 ~~~~~~~~~~~~~
 
-Upon first instantiation of an :py:class:pyimeji.api.Imeji`` object, a configuration will
+Upon first instantiation of an ``:py:class:pyimeji.api.Imeji`` object, a configuration will
 be placed into the users `configuration directory <https://pypi.python.org/pypi/appdirs>`_.
 
 This file can be customized e.g. to provide connection info or to set the logging level:
@@ -35,17 +35,18 @@ This file can be customized e.g. to provide connection info or to set the loggin
     url = http://localhost/imeji
     user = ****
     password = ****
-    service_mode=
+    mode =
 
 .. note::
 
     The logging level will be passed on to the logger for the *requests* library, too. So
     setting it to ``DEBUG`` will add information about the HTTP connection to the log.
 
-    The service_mode is additional setting, which needs to be synchronized with the service_mode of the running imeji instance.
+    The service mode is an additional setting, which needs to be synchronized with the setup of 
+    the corresponding imeji instance
     (at present, there is no possibility to get it from the rest interface).
-    If the imeji instance runs in a private mode, then the service_mode in this configuration file shall be set to value of "private"
-    If the imeji instance runs in a public mode, you do not need to set-up the service_mode
+    If the imeji instance runs in private mode, set the value to ``private``. 
+    If the imeji instance runs in public mode, you do not need to provide a value.
 
 A data curation workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~
