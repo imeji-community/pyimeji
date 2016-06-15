@@ -9,7 +9,7 @@ Welcome to pyimeji's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
 
    tutorial
    cli

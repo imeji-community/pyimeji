@@ -16,8 +16,8 @@ class ImejiError(Exception):
         super(ImejiError, self).__init__(message)
         self.error = error.get('error') if isinstance(error, dict) else error
 
-class GET(object):
-    """Handle GET requests.
+class _GET(object):
+    """Handles GET requests.
 
     This includes requests
 
@@ -32,6 +32,7 @@ class GET(object):
         :param api: An Imeji API instance.
         :param name: Name specifying the kind of object(s) to retrieve. We check whether\
         this name has a plural "s" to determine if a list is to be retrieved.
+
         """
         self._list = name.endswith('s')
         self.rsc = getattr(resource, (name[:-1] if self._list else name).capitalize())
@@ -64,20 +65,40 @@ class GET(object):
 class Imeji(object):
     """The client.
 
-         api = Imeji(service_url='http://demo.imeji.org/imeji/')
-         collection_id = list(api.collections().keys())[0]
-         collection = api.collection(collection_id)
-         collection = api.create('collection', title='the new collection')
+        .. seealso:: The imeji software REST API is documented at https://github.com/imeji-community/imeji/wiki/A_Home-imeji-API-V1
 
-         collection.title="the new title"
-         collection.save()
+        Below some more usage examples:
 
-         item = collection.add_item(fetchUrl='http://example.org')
-         item.delete()
+            >>> # Initiate the imeji API via pyimeji
+            >>> api = Imeji(service_url='http://demo.imeji.org/imeji/')
+            >>> # Get the id of the first collection from the list of first 100
+                # collections which contain "test" in their metadata
+            >>> collection_id = list(api.collections(size=100, q="test").keys())[0]
+            >>> # retrieve the collection with id='collection_id'
+            >>> collection = api.collection('collection_id')
+            >>> # create a new collection with a given title
+            >>> collection = api.create('collection', title='the new collection')
+            >>> # change the title and update it
+            >>> collection.title="the new title"
+            >>> collection.save()
+            >>> # add new item in the collection, and fetch the content from the provided URL
+            >>> item = collection.add_item(fetchUrl='http://example.org')
+            >>> # retrieve and delete an item
+            >>> item = api.item('item_id')
+            >>> item.delete()
 
+        More usage examples you may find in the test sources at **./tests/** e.g. **test_usecases.py**, **test_api.py**
     """
 
     def __init__(self, cfg=None, service_url=None, service_mode=None):
+        """
+
+        :param cfg: Configuration for the service
+        :param service_url: The service URL
+        :param service_mode: set to "private" if imeji instance runs in "private" mode (any other value considered as standard imeji instance mode )
+
+        If the imeji instance is not available or does not run, the instantiation will throw an error message.
+        """
         self.cfg = cfg or Config()
         self.service_url = service_url or self.cfg.get('service', 'url')
         self.service_mode_private = False or ( self.cfg.get('service', 'mode')=='private' or service_mode=='private')
@@ -142,12 +163,14 @@ class Imeji(object):
         return res
 
     def __getattr__(self, name):
-        """Names of resource classes are accepted and resolved as dynamic attribute names.
+        """
+        Names of resource classes are accepted and resolved as dynamic attribute names.
 
         This allows convenient retrieval of resources as api.<resource-class>(id=<id>),
         or api.<resource-class>s(q='x').
+
         """
-        return GET(self, name)
+        return _GET(self, name)
 
     def create(self, rsc, **kw):
         if isinstance(rsc, string_types):
@@ -163,6 +186,8 @@ class Imeji(object):
             setattr(rsc, k, v)
         return rsc.save()
 
-# def patch(self, rsc, metadata={} ,**kw):
-#        metadata = {"metadata" : metadata}
-#        rsc.save2(metadata)
+    def delete_cli(self, rsc, **kw):
+        if isinstance(rsc, string_types):
+            cls = getattr(resource, rsc.capitalize())
+            rsc = cls(kw, self)
+        return rsc.delete()

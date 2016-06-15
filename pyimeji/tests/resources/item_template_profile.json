@@ -1,0 +1,21 @@
+{
+  "id": "newid",
+  "version": 0,
+  "collectionId": "provide-your-collection-id-here",
+  "filename": "<change-the-file-name-here-or-provide-separate-field-for-fetch-or-reference-url-see-API-Documentation>",
+  "fileSize": 0,
+  "metadata": {
+    "Title": "Textual value",
+    "License": {
+      "license": "License name",
+      "url": "http://example.license.com"
+    },
+    "Description": "Textual value",
+    "Geolocation": {
+      "name": "Munich",
+      "longitude": 11.5667,
+      "latitude": 48.1333
+    },
+    "Date": "2015-01-01"
+  }
+}

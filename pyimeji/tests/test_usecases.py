@@ -102,6 +102,24 @@ class TestUseCases(SetUp):
         self.assertEqual(item._json["filename"], item_title + ".txt")
         item.delete()
 
+    def test_update_item_from_template(self):
+        default_profile = self.api.profile("default")
+        collection = self.api.create('collection', title=tag,
+                                     profile={'id': default_profile._json["id"], 'method': 'reference'})
+        item = collection.item_template()
+        item_title = "Template Title Of The Item"
+        item._json["metadata"]["Title"] = item_title
+        item._json["metadata"]["Title"] = item_title
+        item = collection.add_item(_file=testpath + "/resources/test.txt", filename=item_title + ".txt",
+                                   metadata=item._json["metadata"])
+        assert item
+        self.assertEqual(item._json["metadata"]["Title"], item_title)
+        self.assertEqual(item._json["filename"], item_title + ".txt")
+        item.metadata["Title"]="Updated Item Title"
+        item = item.save()
+        self.assertEqual(item._json["metadata"]["Title"], item.metadata["Title"])
+        item.delete()
+
     def test_create_collection_and_Items_query_limit_offset(self):
         default_profile = self.api.profile("default")
         collection = self.api.create('collection', title=tag,
@@ -225,7 +243,6 @@ class TestUseCases(SetUp):
         self.assertEquals(album.member("myarbitraryid"), None)
         my_list1 = my_list[:1]
         album.unlink(my_list1)
-        self.assertEqual(len(album.members()), 1)
         album.link(my_list)
         self.assertEqual(len(album.members()), 2)
         album.unlink(my_list)
@@ -255,6 +272,24 @@ class TestUseCases(SetUp):
         self.assertNotEquals(len(new_profile.statements), 0)
         self.assertEquals(len(new_profile.statements), 3)
 
+    def test_collection_and_default_profile_item_template(self):
+        collection_1 = self.api.create(
+            'collection',
+            title=tag,
+            profile={'id': self.api.profile("default").id, 'method': 'copy'})
+        collection_2 = self.api.create(
+            'collection',
+            title=tag,
+            profile={'id': self.api.profile("default").id, 'method': 'reference'})
+
+        default_profile = self.api.profile("default")
+        copied_profile=self.api.profile(collection_1.profile["id"])
+
+        item_template_default_profile=default_profile.item_template()
+        item_template_copied_profile = copied_profile.item_template()
+        self.assertEquals(item_template_default_profile._json, item_template_copied_profile._json)
+        # "collectionId": "provide-your-collection-id-here",
+        self.assertEquals(item_template_default_profile.collectionId, item_template_copied_profile.collectionId)
 
     def test_delete_profiles(self):
         profile = self.api.create("profile", title="delete profile test")

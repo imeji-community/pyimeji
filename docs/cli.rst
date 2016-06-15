@@ -6,9 +6,9 @@ Command Line Interface
 the "imeji" open source software
 for management of research data and its JSON-based REST API.
 
-Details: http://imeji.org
-Source:  https://github.com/imeji-community/imeji
-REST-API documentation: https://github.com/imeji-community/imeji/wiki/A_Home-imeji-API-V1
+ .. seealso:: imeji Home  http://imeji.org
+ .. seealso:: imeji Sources https://github.com/imeji-community/imeji
+ .. seealso:: imeji REST API documentation https://github.com/imeji-community/imeji/wiki/A_Home-imeji-API-V1
 
 In the following examples ``$`` denotes a shell prompt.
 Successful execution of a command will return ``0`` as exit status.
@@ -45,31 +45,61 @@ to ``stdout``:
 
 .. code-block:: javascript
 
-    $ imeji retrieve collection IgCw438si5hRXC6n
+    imeji create collection 'title=PyImeji CLI Collection Test;description=Description of the PyImeji'
     {
-        "contributors": [],
-        "createdBy": {
-            "fullname": "Forkel, Robert",
-            "userId": "lZANcuLhG2E1ePL5"
-        },
-        "createdDate": "2015-01-22T09:05:43 +0100",
-        "description": "",
-        "discardComment": "",
-        "id": "IgCw438si5hRXC6n",
-        "modifiedBy": {
-            "fullname": "Forkel, Robert",
-            "userId": "lZANcuLhG2E1ePL5"
-        },
-        "modifiedDate": "2015-01-22T09:05:50 +0100",
-        "profile": {
-            "method": "",
-            "profileId": "89o67niBZBmOhX4L"
-        },
-        "status": "RELEASED",
-        "title": "api test",
-        "version": 1,
-        "versionDate": "2015-01-22T09:05:50 +0100"
-    }
+    "contributors": [
+        {
+            "alternativeName": "",
+            "completeName": "",
+            "familyName": "none",
+            "givenName": "",
+            "id": "E344fe8nfk3CpHQm",
+            "identifiers": [
+                {
+                    "type": "imeji",
+                    "value": "E344fe8nfk3CpHQm"
+                }
+            ],
+            "organizations": [
+                {
+                    "city": "",
+                    "country": "",
+                    "description": "",
+                    "id": "eUYndEKw6JN5GCap",
+                    "identifiers": [
+                        {
+                            "type": "imeji",
+                            "value": "eUYndEKw6JN5GCap"
+                        }
+                    ],
+                    "name": "none"
+                }
+            ],
+            "role": "author"
+        }
+    ],
+    "createdBy": {
+        "fullname": "Bulatovic, Natasa",
+        "userId": "w1Xwtwc3BDYkNuG"
+    },
+    "createdDate": "2016-06-15T10:04:15 +0200",
+    "description": "Description of the PyImeji",
+    "discardComment": "",
+    "id": "6b_2hjzWJyYISqb",
+    "modifiedBy": {
+        "fullname": "Bulatovic, Natasa",
+        "userId": "w1Xwtwc3BDYkNuG"
+    },
+    "modifiedDate": "2016-06-15T10:04:15 +0200",
+    "profile": {
+        "id": null,
+        "method": null
+    },
+    "status": "PENDING",
+    "title": "PyImeji CLI Collection Test",
+    "version": 0,
+    "versionDate": ""
+}
 
 
 retrieve

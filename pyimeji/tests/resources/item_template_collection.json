@@ -1,0 +1,20 @@
+{
+  "id": "newid",
+  "version": 0,
+  "collectionId": "FKMxUpYdV9N2J4XG",
+  "filename": "<change-the-file-name-here-or-provide-separate-field-for-fetch-or-reference-url-see-API-Documentation>",
+  "fileSize": 0,
+  "metadata": {
+    "date-experiment": "2015-01-01",
+    "date-microscope": "2015-01-01",
+    "age [P]": 999.9,
+    "Dye": "Textual value",
+    "slice-number": 999.9,
+    "lens": 999.9,
+    "intensity": 999.9,
+    "layers": 999.9,
+    "voxel size [nm] - x": 999.9,
+    "voxel size [nm] - y": 999.9,
+    "voxel size [nm] - z": 999.9
+  }
+}

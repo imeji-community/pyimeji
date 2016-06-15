@@ -13,7 +13,7 @@ SERVICE_URL = 'http://example.org'
 
 RESOURCES = {
     name: jsonload(pkg_path('tests', 'resources', '%s.json' % name))
-    for name in ['item', 'collection', 'album', 'profile']}
+    for name in ['item', 'collection', 'album', 'profile', 'item_template_collection', 'item_template_profile']}
 
 
 class Response(object):
@@ -37,9 +37,10 @@ for path, method, status, content in [
     ('collections/FKMxUpYdV9N2J4XG', 'delete', 204, {}),
     ('collections/FKMxUpYdV9N2J4XG', 'get', 200, RESOURCES['collection']),
     ('collections/FKMxUpYdV9N2J4XG/items', 'get', 200, jsondumps([RESOURCES['item']])),
-
+    ('collections/FKMxUpYdV9N2J4XG/items/template', 'get', 200, RESOURCES['item_template_collection']),
     ('profiles/dhV6XK39_UPrItK5', 'get', 200, RESOURCES['profile']),
     ('profiles', 'post', 201, RESOURCES['profile']),
+    ('profiles/dhV6XK39_UPrItK5/template', 'get', 200, RESOURCES['item_template_profile']),
     ('profiles/dhV6XK39_UPrItK5', 'delete', 204, {}),
 
     ('albums', 'get', 200, jsondumps([{"id": "MAlOuZ4Y9iDR_"}])),
@@ -89,6 +90,10 @@ class ApiTest(TestCase):
             collection.title = 'New title'
             self.assertIsInstance(collection.createdDate, datetime)
             self.assertEqual(collection.title, 'New title')
+
+            collection_template_item = collection.item_template()
+            self.assertEqual(collection_template_item.collectionId, collection.id)
+
             collection.dumps()
             if not self.api.service_mode_private:
                 collection.release()
@@ -104,6 +109,7 @@ class ApiTest(TestCase):
                 title='cde',
                 profile=self.api.profile('dhV6XK39_UPrItK5'))
             assert collection3
+
 
     def test_item(self):
         with HTTMock(imeji):
@@ -127,9 +133,11 @@ class ApiTest(TestCase):
             profile = self.api.profile('dhV6XK39_UPrItK5')
             self.assertEqual(profile.title, 'METADATA PROFILE VIA REST')
             profile.title="NEW PROFILE TITLE"
+            profile_template_item = profile.item_template()
+            self.assertEqual(profile_template_item.collectionId, 'provide-your-collection-id-here')
             profile1= profile.copy()
-            assert profile1
             profile.delete()
+            assert profile1
 
 
 
@@ -141,4 +149,4 @@ class ApiTest(TestCase):
             res = main(
                     ('--service=%s retrieve collection FKMxUpYdV9N2J4XG' % SERVICE_URL)
                     .split())
-            #self.assertIsInstance(res, Collection)
+            self.assertIsInstance(res, Collection)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""imeji
+"""imeji command line interface
 
 Usage:
   imeji create <what> <properties>
