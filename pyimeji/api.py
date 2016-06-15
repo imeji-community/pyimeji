@@ -185,9 +185,3 @@ class Imeji(object):
         for k, v in kw.items():
             setattr(rsc, k, v)
         return rsc.save()
-
-    def delete_cli(self, rsc, **kw):
-        if isinstance(rsc, string_types):
-            cls = getattr(resource, rsc.capitalize())
-            rsc = cls(kw, self)
-        return rsc.delete()
