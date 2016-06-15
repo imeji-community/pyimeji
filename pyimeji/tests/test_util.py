@@ -22,3 +22,11 @@ class Tests(TestCase):
         json_collection = collection.dumps()
         self.assertTrue('TEST DUMPER' in json_collection)
         collection.delete()
+
+    def test_pkg_path(self):
+        import pyimeji
+        from pyimeji.util import pkg_path
+
+        func_test = pkg_path('test.json' )
+        path_test = os.path.join(os.path.dirname(pyimeji.__file__), 'test.json')
+        self.assertEquals(func_test, path_test)
