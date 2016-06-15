@@ -67,7 +67,7 @@ In the following we use pyimeji to curate a data collection on an imeji instance
 
     >>> from pyimeji.api import Imeji
     >>> api = Imeji()
-    >>> collection = api.create('collection', title='hello world!', profile={'id': api.profile('default').id, 'method': 'reference'}
+    >>> collection = api.create('collection', title='hello world!', profile={'id': api.profile('default').id, 'method': 'reference'})
 
 or: Getting a collection:
 
