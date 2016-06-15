@@ -307,18 +307,16 @@ class TestUseCases(SetUp):
         with self.assertRaises(ImejiError):
             self.api.collection(collection.id)
 
-    def test_release_withdaw_delete_profiles(self):
+    def test_release_withdraw_delete_profiles(self):
         profile = self.api.create("profile", title="discard profile test pyimeji")
         collection = self.api.create('collection', title=tag,
                                      profile={'id': profile.id, 'method': 'reference'})
 
-        self.assertTrue(profile._api.service_mode_private)
-
-        # if self.api.service_mode_private:
-        #     with self.assertRaises(ImejiError):
-        #         print("PRIVATE SERVICE MODE= ", self.api.service_mode_private)
-
-        profile.release()
+        if self.api.service_mode_private:
+            with self.assertRaises(ImejiError):
+                profile.release()
+        else:
+            profile.release()
 
 
         with self.assertRaises (ImejiError):
@@ -326,7 +324,7 @@ class TestUseCases(SetUp):
 
         collection.delete()
 
-        # code below shall always raise exception in both pribate or public modes
+        # code below shall always raise exception in both private or public modes
         with self.assertRaises (ImejiError):
             profile.delete()
 
