@@ -44,14 +44,7 @@ def main(argv=None):  # pragma: no cover
     """Main entry point for the imeji CLI."""
     cfg = Config()
     args = docopt(__doc__, version=__version__, argv=argv)
-    cli_service=args['--service']
-    # check if Imeji instance is running and notify the user
-    try:
-        api = Imeji(cfg, service_url=args['--service'])
-    except Exception as e:
-        raise Exception (
-            "WARNING : Service is not available or there is another problem", e)
-
+    api = Imeji(cfg, service_url=args['--service'])
     if args['retrieve']:
         return checked_call(getattr(api, args['<what>']), id=args['<id>'])
     if args['create']:
