@@ -159,7 +159,7 @@ class Imeji(object):
                             if "error" in res_json and "exceptionReport" in res_json["error"] and "title" in res_json["error"]:
                                 err_message += "\nDetails from response: " + res_json["error"]["title"] + ". " + res_json["error"]["exceptionReport"]
                         except:
-                            print "hasi"
+                            pass
                         log.error(res)
                     raise ImejiError(err_message, res)                    
 
