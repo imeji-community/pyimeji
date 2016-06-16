@@ -102,14 +102,16 @@ class Imeji(object):
         self.cfg = cfg or Config()
         self.service_url = service_url or self.cfg.get('service', 'url')
         self.service_mode_private = False or ( self.cfg.get('service', 'mode')=='private' or service_mode=='private')
+        self.service_unavailable_message = \
+              "WARNING : The REST Interface of Imeji at {rest_service} is not available or there is another problem, " \
+              "check if the service is running under {imeji_service}"\
+                  .format(imeji_service=self.service_url, rest_service=self.service_url+'/rest')
 
         # check if Imeji instance is running and notify the user
         try:
             res_head= requests.head(self.service_url)
         except Exception as e:
-            raise Exception("WARNING : The REST Interface of Imeji at {rest_service} is not available or there is another problem"
-                  ", check if the service is running under {imeji_service}".
-                  format(imeji_service=self.service_url, rest_service=self.service_url+'/rest'), e)
+            raise ImejiError(self.service_unavailable_message, e)
 
         user = self.cfg.get('service', 'user', default=None)
         password = self.cfg.get('service', 'password', default=None)
@@ -139,27 +141,32 @@ class Imeji(object):
                 can_params = {"size", "offset", "q"}
                 if not (can_params >= set(req_params.keys())):
                     raise ValueError("Wrong set of parameters in the request " + str(set(req_params) - set(can_params)))
+        #check if the instance has gone away in meantime
+        try:
+            method = getattr(self.session, method.lower())
+            res = method(self.service_url + '/rest' + path, **kw)
+        except Exception as e:
+             raise ImejiError(self.service_unavailable_message, e)
 
-        method = getattr(self.session, method.lower())
-        res = method(self.service_url + '/rest' + path, **kw)
         if assert_status:
-            if res.status_code != assert_status:  # pragma: no cover
-                log.error(
-                    'got HTTP %s, expected HTTP %s' % (res.status_code, assert_status))
-                log.error(res.text[:1000] if hasattr(res, 'text') else res)
-                raise ImejiError('Unexpected HTTP status code', res )
+                if res.status_code != assert_status:  # pragma: no cover
+                    log.error(
+                       'got HTTP %s, expected HTTP %s' % (res.status_code, assert_status))
+                    log.error(res.text[:1000] if hasattr(res, 'text') else res)
+                    raise ImejiError( 'Got HTTP response code %s, expected HTTP response code %s'
+                                      % (res.status_code, assert_status) + "\n" +res.text[:1000] if hasattr(res, 'text') else res , res)
         if json_res:
-            try:
-                res = res.json()
-                if "results" in res:
-                    self.total_number_of_results = res["totalNumberOfResults"]
-                    self.number_of_results = res["numberOfResults"]
-                    self.offset = res["offset"]
-                    self.size = res["size"]
-                    res = res["results"]
-            except ValueError:  # pragma: no cover
-                log.error(res.text[:1000])
-                pass
+                try:
+                    res = res.json()
+                    if "results" in res:
+                        self.total_number_of_results = res["totalNumberOfResults"]
+                        self.number_of_results = res["numberOfResults"]
+                        self.offset = res["offset"]
+                        self.size = res["size"]
+                        res = res["results"]
+                except ValueError:  # pragma: no cover
+                    log.error(res.text[:1000])
+                    pass
         return res
 
     def __getattr__(self, name):
