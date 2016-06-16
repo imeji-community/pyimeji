@@ -150,3 +150,15 @@ class ApiTest(TestCase):
                     ('--service=%s retrieve collection FKMxUpYdV9N2J4XG' % SERVICE_URL)
                     .split())
             self.assertIsInstance(res, Collection)
+
+class ServiceTest(TestCase):
+    def test_service_setup(self):
+        from pyimeji.api import Imeji, ImejiError
+        with self.assertRaises(ImejiError):
+                Imeji(service_url='arbitrary service')
+
+    def test_service_unavailable_in_meantime_setup(self):
+        from pyimeji.api import Imeji, ImejiError
+        api= Imeji(service_url=SERVICE_URL)
+        with self.assertRaises(ImejiError):
+            api._req(path="some arbitrary path"+SERVICE_URL, json_res=True, assert_status=200)

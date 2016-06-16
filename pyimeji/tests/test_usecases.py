@@ -68,6 +68,13 @@ class TestUseCases(SetUp):
         self.assertEqual(item._json["metadata"]["Title"], "Test")
         self.assertEqual(item._json["fileUrl"], file_url)
 
+    def test_add_item_without_metadata_and_withstring(self):
+        default_profile = self.api.profile("default")
+        collection = self.api.create('collection', title=tag,
+                                     profile={'id': default_profile._json["id"], 'method': 'reference'})
+        with self.assertRaises(AttributeError):
+            item = collection.add_item(metadata="this is false parameter now and will not be filename")
+
     def test_get_items_template(self):
         default_profile = self.api.profile("default")
         collection = self.api.create('collection', title=tag,
@@ -248,11 +255,9 @@ class TestUseCases(SetUp):
         album.unlink(my_list)
         self.assertEqual(len(album.members()), 0)
 
-    def test_delete_default_profiles(self):
-        default_profiles = self.api.profiles(size=500)
-        for prof in default_profiles:
-            if default_profiles[prof]["default"] == True and default_profiles[prof]["status"] != "RELEASED":
-                self.api.delete(self.api.profile(prof))
+    def test_delete_default_profile(self):
+        with self.assertRaises(ImejiError):
+                self.api.delete(self.api.profile("default"))
 
     def test_copy_default_profiles(self):
         default_profile = self.api.profile("default")
@@ -299,13 +304,11 @@ class TestUseCases(SetUp):
             profile.delete()
 
         collection.delete()
-        profile.delete
+        with self.assertRaises(ImejiError):
+            self.api.collection(collection.id)
 
         with self.assertRaises(ImejiError):
             self.api.profile(profile.id)
-
-        with self.assertRaises(ImejiError):
-            self.api.collection(collection.id)
 
     def test_release_withdraw_delete_profiles(self):
         profile = self.api.create("profile", title="discard profile test pyimeji")
@@ -317,16 +320,12 @@ class TestUseCases(SetUp):
                 profile.release()
         else:
             profile.release()
-
+            self.assertEqual(self.api.profile(profile.id).status, 'RELEASED')
 
         with self.assertRaises (ImejiError):
             profile.delete()
 
         collection.delete()
-
-        # code below shall always raise exception in both private or public modes
-        with self.assertRaises (ImejiError):
-            profile.delete()
 
         if not self.api.service_mode_private:
             profile.discard("discard profile test pyimeji")
