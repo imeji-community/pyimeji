@@ -8,6 +8,7 @@ from unittest import TestCase
 from httmock import all_requests, response, HTTMock
 
 from pyimeji.util import pkg_path, jsonload, jsondumps
+from nose.tools import *
 
 SERVICE_URL = 'http://example.org'
 
@@ -152,13 +153,15 @@ class ApiTest(TestCase):
             self.assertIsInstance(res, Collection)
 
 class ServiceTest(TestCase):
-    def test_service_setup(self):
-        from pyimeji.api import Imeji, ImejiError
-        with self.assertRaises(ImejiError):
-                Imeji(service_url='arbitrary service')
+    from pyimeji.api import ImejiError
 
+    @raises(ImejiError, ConnectionError, ConnectionRefusedError)
+    def test_service_setup(self):
+        from pyimeji.api import Imeji
+        Imeji(service_url='arbitrary service')
+
+    @raises(ImejiError,ConnectionError, ConnectionRefusedError)
     def test_service_unavailable_in_meantime_setup(self):
-        from pyimeji.api import Imeji, ImejiError
+        from pyimeji.api import Imeji
         api= Imeji(service_url=SERVICE_URL)
-        with self.assertRaises(ImejiError):
-            api._req(path="some arbitrary path"+SERVICE_URL, json_res=True, assert_status=200)
+        api._req(path="some arbitrary path"+SERVICE_URL, json_res=True, assert_status=200)
