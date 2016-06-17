@@ -256,10 +256,10 @@ class Profile(Resource, _DiscardReleaseMixin):
         """
         return Profile(
             self._api._req(self._path(batch=True),
-                           method='post',
-                           json_res=True,
-                           assert_status=201,
-                           data=self.dumps()),
+                          method='post',
+                          json_res=True,
+                          assert_status=201,
+                          data=self.dumps()),
             self._api._req(self._path()))
 
 

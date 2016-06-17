@@ -11,13 +11,14 @@ log = logging.getLogger(__name__)
 
 class SetUp(unittest.TestCase):
     @classmethod
-    def setUpClass(self):
+    def setUpClass(self):  #pragma: no cover
         try:
             self.api = Imeji()
         except ImejiError as e:
-            self.fail(self, e)
+            self.fail(self, "No connection, no tests will be run")
+
     @classmethod
-    def tearDownClass(self):
+    def tearDownClass(self):  #pragma: no cover
         # delete all collections with title  tag"
         collections = self.api.collections(size=500)
         for c in collections:
@@ -261,7 +262,7 @@ class TestUseCases(SetUp):
 
     def test_copy_default_profiles(self):
         default_profile = self.api.profile("default")
-        default_profile.title=default_profile.title+" A COPY OF THE DEFAULT PROFILE "
+        default_profile.title += " A COPY OF THE DEFAULT PROFILE "
         new_profile = None
 
         with self.assertRaises(ImejiError):
@@ -316,7 +317,7 @@ class TestUseCases(SetUp):
                                      profile={'id': profile.id, 'method': 'reference'})
 
         if self.api.service_mode_private:
-            with self.assertRaises(ImejiError):
+            with self.assertRaises(ImejiError): # pragma: no cover
                 profile.release()
         else:
             profile.release()
@@ -330,6 +331,6 @@ class TestUseCases(SetUp):
         if not self.api.service_mode_private:
             profile.discard("discard profile test pyimeji")
 
-if __name__ == '__main__':
+if __name__ == '__main__': #pragma: no cover
     unittest.main()
 

@@ -1,6 +1,6 @@
-===============================
+=====
 imeji
-===============================
+=====
 
 .. image:: https://travis-ci.org/imeji-community/pyimeji.png?branch=master
         :target: https://travis-ci.org/imeji-community/pyimeji

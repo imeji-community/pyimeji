@@ -1,4 +1,5 @@
 import os
+import json
 
 from unittest import TestCase
 from pyimeji.api import Imeji
@@ -14,14 +15,11 @@ class Tests(TestCase):
 
 
     def test_jsondumps(self):
-        from pyimeji.util import jsondumps
-        api = Imeji()
-        default_profile = api.profile("default")
-        collection = api.create('collection', title="TEST DUMPER",
-                                         profile={'id': default_profile._json["id"], 'method': 'reference'})
-        json_collection = collection.dumps()
-        self.assertTrue('TEST DUMPER' in json_collection)
-        collection.delete()
+        from pyimeji.util import jsonload, jsondumps
+        object_test= jsonload(os.path.join(os.path.dirname(__file__), 'test.json'))
+        with open(os.path.join(os.path.dirname(__file__), 'test.json'), mode='rb') as file:
+            object_read = file.read()
+        self.assertEqual (jsondumps(object_test), object_read)
 
     def test_pkg_path(self):
         import pyimeji
