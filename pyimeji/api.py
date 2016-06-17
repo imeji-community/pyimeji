@@ -109,7 +109,7 @@ class Imeji(object):
 
         # check if Imeji instance is running and notify the user
         try:
-            requests.head(self.service_url)
+            res_head= requests.head(self.service_url)
         except Exception as e:
             raise ImejiError(self.service_unavailable_message, e)
 
@@ -145,7 +145,7 @@ class Imeji(object):
         try:
             method = getattr(self.session, method.lower())
             res = method(self.service_url + '/rest' + path, **kw)
-        except Exception as e: # pragma: no cover
+        except Exception as e:
             raise ImejiError(self.service_unavailable_message, e)
 
         if assert_status:
