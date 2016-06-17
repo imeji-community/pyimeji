@@ -155,12 +155,12 @@ class ApiTest(TestCase):
 class ServiceTest(TestCase):
     from pyimeji.api import ImejiError
 
-    @raises(ImejiError, ConnectionError, ConnectionRefusedError)
+    @raises(ImejiError)
     def test_service_setup(self):
         from pyimeji.api import Imeji
         Imeji(service_url='arbitrary service')
 
-    @raises(ImejiError,ConnectionError, ConnectionRefusedError)
+    @raises(ImejiError)
     def test_service_unavailable_in_meantime_setup(self):
         from pyimeji.api import Imeji
         api= Imeji(service_url=SERVICE_URL)
