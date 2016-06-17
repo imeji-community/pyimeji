@@ -47,7 +47,7 @@ class Resource(object):
         try:
             res = self._json[attr]
         except KeyError:
-                raise AttributeError(attr)
+            raise AttributeError(attr)
 
         if attr.endswith('Date'):
             res = parse(res)
@@ -99,6 +99,7 @@ class _WithAuthor(Resource):
     """
         Supports creation of Collection or Album resources with or without contributors.
     """
+
     def __init__(self, d, api):
         if 'contributors' not in d:
             d['contributors'] = [
@@ -125,7 +126,7 @@ class _DiscardReleaseMixin(object):
             self._path('discard'),
             data=dict(id=self.id, discardComment=comment),
             method='put',
-            assert_status=200 if not self._api.service_mode_private else 405, json_res=False )
+            assert_status=200 if not self._api.service_mode_private else 405, json_res=False)
 
     def release(self):
         """
@@ -143,6 +144,7 @@ class Album(_WithAuthor, _DiscardReleaseMixin):
         An aggregation of more imeji items (only item references), useful for creation of "special" views of imeji
         data independent of the item collection. An item may be referenced by many albums.
     """
+
     def members(self, **kw):
         """
             Lists all items which are members of the current album. Accepts q (fulltext query), size and offset parameters.
@@ -172,15 +174,18 @@ class Album(_WithAuthor, _DiscardReleaseMixin):
     def unlink(self, *ids):
         """
             Unlinks members from the album
-            :param: List of item identifiers which need to be unlinked from the current album e.g. [id-1, id-2, .., id-n]
+            :param: List of item identifiers which need to be unlinked from the current album
+                e.g. [id-1, id-2, .., id-n]
         """
         return self._act_on_members('unlink', *ids, **{'assert_status': 204})
 
 
 class Collection(_WithAuthor, _DiscardReleaseMixin):
     """
-        Collection is basic container (context) for administration of items in imeji. Each item in imeji may be administered in at most one collection.
+        Collection is basic container (context) for administration of items in imeji. Each item in imeji may be
+        administered in at most one collection.
     """
+
     def items(self, **kw):
         """
           Lists all items within current collection. Accepts q (fulltext query), size and offset parameters.
@@ -191,8 +196,12 @@ class Collection(_WithAuthor, _DiscardReleaseMixin):
 
     def add_item(self, **kw):
         """
-            Creates a new item within the current collection. It accepts a url or a file and a JSON-formatted metadata in the body.
-            Check the `REST API documentation for item creation <https://github.com/imeji-community/imeji/wiki/Items:-Create-new-item">`_ for more information about the possible parameters.
+            Creates a new item within the current collection. It accepts a url or a file
+            and a JSON-formatted metadata in the body.
+
+            Check the `REST API documentation for item creation
+            <https://github.com/imeji-community/imeji/wiki/Items:-Create-new-item">`_
+            for more information about the possible parameters.
 
             :rtype: Item
 
@@ -209,24 +218,26 @@ class Collection(_WithAuthor, _DiscardReleaseMixin):
 
     def save(self):
         """
-            Creates a new item or updates an existing collection, depending if "id" parameter is provided in the JSON body of the request or not.
+            Creates a new item or updates an existing collection, depending if "id" parameter is provided
+            in the JSON body of the request or not.
 
             :rtype: Collection
         """
         if self._json.get('id'):
-            kw = dict(method='put' if self._json.get('id') else 'post', data=self.dumps(), headers={'Content-Type': 'application/json'})
+            kw = dict(method='put' if self._json.get('id') else 'post', data=self.dumps(),
+                      headers={'Content-Type': 'application/json'})
             return self.__class__(self._api._req(self._path(), **kw), self._api)
         return Resource.save(self)
 
-
     def item_template(self):
         """
-            Retrieves an item template in a JSON format in accordance with the current metadata profile of the current collection.
+            Retrieves an item template in a JSON format in accordance with the current metadata
+             profile of the current collection.
 
             :rtype: Item
 
         """
-        json_item= self._api._req(self._path('items/template'))
+        json_item = self._api._req(self._path('items/template'))
         return Item(json_item, self._api._req(self._path('items')))
 
 
@@ -239,6 +250,7 @@ class Profile(Resource, _DiscardReleaseMixin):
         with the collection metadata profile only.
         However, each collection in imeji may have own specific metadata profile to be applied to the collection items.
     """
+
     def item_template(self):
         """
         Retrieves an item template in a JSON format in accordance with the current metadata profile.
@@ -256,21 +268,23 @@ class Profile(Resource, _DiscardReleaseMixin):
         """
         return Profile(
             self._api._req(self._path(batch=True),
-                          method='post',
-                          json_res=True,
-                          assert_status=201,
-                          data=self.dumps()),
+                           method='post',
+                           json_res=True,
+                           assert_status=201,
+                           data=self.dumps()),
             self._api._req(self._path()))
-
 
 
 class Item(Resource):
     """
-        Items are basic content resources in imeji. An item can be created within one collection, and aggregated by many albums.
-        An item in imeji is described with metadata, which are defined through the metadata profile of the collection.
-        An item in imeji may contain any binary content (e.g. pdf, image, video, text, csv etc.) or reference external content
-        via an URL. Contained binary content may be uploaded from local storage or "fetched" by imeji from publicly accessible URL.
+        Items are basic content resources in imeji. An item can be created within one collection,
+        and aggregated by many albums. An item in imeji is described with metadata, which are defined through
+        the metadata profile of the collection. An item in imeji may contain any binary content
+        (e.g. pdf, image, video, text, csv etc.) or reference external content
+        via an URL. Contained binary content may be uploaded from local storage or
+        "fetched" by imeji from publicly accessible URL.
     """
+
     def __init__(self, d, api):
         self.__file = None
         _file = d.pop('_file', None)
@@ -286,7 +300,7 @@ class Item(Resource):
         if attr == 'metadata' and isinstance(value, string_types):
             # if a string is passed as metadata, it is interpreted as filename.
             # NB 19.05.2016: this makes no sense and it changes the API use in unforeseen manner
-            #value = jsonload(value)
+            # value = jsonload(value)
             raise AttributeError(attr)
         Resource.__setattr__(self, attr, value)
 

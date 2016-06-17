@@ -24,7 +24,7 @@ def jsonload(path, **kw):
 
 
 def jsondumps(obj):
-    if PY3: # pragma: no cover
+    if PY3:
         return json.dumps(obj).encode('utf8')
     else:
         return json.dumps(obj)

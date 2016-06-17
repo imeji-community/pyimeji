@@ -6,9 +6,9 @@ from datetime import datetime
 from unittest import TestCase
 
 from httmock import all_requests, response, HTTMock
+from nose.tools import *
 
 from pyimeji.util import pkg_path, jsonload, jsondumps
-from nose.tools import *
 
 SERVICE_URL = 'http://example.org'
 
@@ -58,11 +58,13 @@ for path, method, status, content in [
     r = Response(('/rest/' + path if method != "head" else path, method), status, content)
     RESPONSES[r.key] = r
 
+
 @all_requests
 def imeji(url, request):
     headers = {'content-type': 'application/json'}
     res = RESPONSES[(url.path, request.method.lower())]
     return response(res.status, res.content, headers, None, 5, request)
+
 
 class ApiTest(TestCase):
     def setUp(self):
@@ -77,7 +79,7 @@ class ApiTest(TestCase):
             assert album.id in album.member('Wo1JI_oZNyrfxV_t')._path()
             if not self.api.service_mode_private:
                 album.release()
-                album=self.api.album(album.id)
+                album = self.api.album(album.id)
                 album.link(['Wo1JI_oZNyrfxV_t'])
                 album.discard('test comment')
 
@@ -111,7 +113,6 @@ class ApiTest(TestCase):
                 profile=self.api.profile('dhV6XK39_UPrItK5'))
             assert collection3
 
-
     def test_item(self):
         with HTTMock(imeji):
             self.api.create('item', _file=__file__)
@@ -133,14 +134,12 @@ class ApiTest(TestCase):
         with HTTMock(imeji):
             profile = self.api.profile('dhV6XK39_UPrItK5')
             self.assertEqual(profile.title, 'METADATA PROFILE VIA REST')
-            profile.title="NEW PROFILE TITLE"
+            profile.title = "NEW PROFILE TITLE"
             profile_template_item = profile.item_template()
             self.assertEqual(profile_template_item.collectionId, 'provide-your-collection-id-here')
-            profile1= profile.copy()
+            profile1 = profile.copy()
             profile.delete()
             assert profile1
-
-
 
     def test_cli(self):
         from pyimeji.cli import main
@@ -148,9 +147,10 @@ class ApiTest(TestCase):
 
         with HTTMock(imeji):
             res = main(
-                    ('--service=%s retrieve collection FKMxUpYdV9N2J4XG' % SERVICE_URL)
+                ('--service=%s retrieve collection FKMxUpYdV9N2J4XG' % SERVICE_URL)
                     .split())
             self.assertIsInstance(res, Collection)
+
 
 class ServiceTest(TestCase):
     from pyimeji.api import ImejiError
@@ -158,10 +158,12 @@ class ServiceTest(TestCase):
     @raises(ImejiError)
     def test_service_setup(self):
         from pyimeji.api import Imeji
-        Imeji(service_url='arbitrary service')
+        Imeji(service_url=SERVICE_URL + "FAKE")
 
     @raises(ImejiError)
     def test_service_unavailable_in_meantime_setup(self):
         from pyimeji.api import Imeji
-        api= Imeji(service_url=SERVICE_URL)
-        api._req(path="some arbitrary path"+SERVICE_URL, json_res=True, assert_status=200)
+        with HTTMock(imeji):
+            api = Imeji(service_url=SERVICE_URL)
+            api.service_url = "http://non_existing_service"
+            api._req(SERVICE_URL, json_res=True, assert_status=200)

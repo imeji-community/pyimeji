@@ -5,20 +5,22 @@ import logging
 
 tag = "automated test pyimeji"
 testpath = os.path.dirname(os.path.abspath(__file__))
-defaultFilename = "<change-the-file-name-here-or-provide-separate-field-for-fetch-or-reference-url-see-API-Documentation>"
+defaultFilename = '<change-the-file-name-here-or-provide' \
+                  '-separate-field-for-fetch-or-reference-url-see-API-Documentation>'
 
 log = logging.getLogger(__name__)
 
+
 class SetUp(unittest.TestCase):
     @classmethod
-    def setUpClass(self):  #pragma: no cover
+    def setUpClass(self):  # pragma: no cover
         try:
             self.api = Imeji()
-        except ImejiError as e:
+        except ImejiError:
             self.fail(self, "No connection, no tests will be run")
 
     @classmethod
-    def tearDownClass(self):  #pragma: no cover
+    def tearDownClass(self):  # pragma: no cover
         # delete all collections with title  tag"
         collections = self.api.collections(size=500)
         for c in collections:
@@ -53,7 +55,8 @@ class TestUseCases(SetUp):
         collection = self.api.create('collection', title=tag,
                                      profile={'id': default_profile._json["id"], 'method': 'reference'})
         item = collection.add_item(
-            fetchUrl="https://de.wikipedia.org/wiki/Max_Planck_Digital_Library#/media/File:MPI-Muc-Amalienstra%C3%9Fe.JPG",
+            fetchUrl='https://de.wikipedia.org/wiki/Max_Planck_Digital_Library'
+                     '#/media/File:MPI-Muc-Amalienstra%C3%9Fe.JPG',
             metadata={"Title": "Test"})
         self.assertEqual(item._json["metadata"]["Title"], "Test")
         self.assertEqual(item._json["filename"], "File:MPI-Muc-Amalienstra%C3%9Fe.JPG")
@@ -74,7 +77,7 @@ class TestUseCases(SetUp):
         collection = self.api.create('collection', title=tag,
                                      profile={'id': default_profile._json["id"], 'method': 'reference'})
         with self.assertRaises(AttributeError):
-            item = collection.add_item(metadata="this is false parameter now and will not be filename")
+            collection.add_item(metadata="this is false parameter now and will not be filename")
 
     def test_get_items_template(self):
         default_profile = self.api.profile("default")
@@ -85,7 +88,7 @@ class TestUseCases(SetUp):
         self.assertEqual(item._json["metadata"]["Title"], "Textual value")
         self.assertEqual(item._json["metadata"]["Comment"], "Textual value")
         with self.assertRaises(KeyError):
-            item._json["metadata"]["WhatevereElse"]
+            print(item._json["metadata"]["WhatevereElse"] != '')
         self.assertEqual(item._json["filename"], defaultFilename)
 
     def test_get_items_template_emptyprofile(self):
@@ -123,7 +126,7 @@ class TestUseCases(SetUp):
         assert item
         self.assertEqual(item._json["metadata"]["Title"], item_title)
         self.assertEqual(item._json["filename"], item_title + ".txt")
-        item.metadata["Title"]="Updated Item Title"
+        item.metadata["Title"] = "Updated Item Title"
         item = item.save()
         self.assertEqual(item._json["metadata"]["Title"], item.metadata["Title"])
         item.delete()
@@ -258,22 +261,21 @@ class TestUseCases(SetUp):
 
     def test_delete_default_profile(self):
         with self.assertRaises(ImejiError):
-                self.api.delete(self.api.profile("default"))
+            self.api.delete(self.api.profile("default"))
 
     def test_copy_default_profiles(self):
         default_profile = self.api.profile("default")
         default_profile.title += " A COPY OF THE DEFAULT PROFILE "
-        new_profile = None
 
         with self.assertRaises(ImejiError):
-            new_profile = default_profile.copy()
+            default_profile.copy()
 
-        default_profile.default=False
-        new_profile=default_profile.copy()
+        default_profile.default = False
+        new_profile = default_profile.copy()
         self.assertNotEquals(default_profile.id, new_profile.id)
         self.assertEquals(new_profile.default, False)
-        default_profile=self.api.profile("default")
-        self.assertEquals(new_profile.title, default_profile.title+" A COPY OF THE DEFAULT PROFILE ")
+        default_profile = self.api.profile("default")
+        self.assertEquals(new_profile.title, default_profile.title + " A COPY OF THE DEFAULT PROFILE ")
         self.assertEquals(len(new_profile.statements), len(default_profile.statements))
         self.assertNotEquals(len(new_profile.statements), 0)
         self.assertEquals(len(new_profile.statements), 3)
@@ -283,15 +285,15 @@ class TestUseCases(SetUp):
             'collection',
             title=tag,
             profile={'id': self.api.profile("default").id, 'method': 'copy'})
-        collection_2 = self.api.create(
+        self.api.create(
             'collection',
             title=tag,
             profile={'id': self.api.profile("default").id, 'method': 'reference'})
 
         default_profile = self.api.profile("default")
-        copied_profile=self.api.profile(collection_1.profile["id"])
+        copied_profile = self.api.profile(collection_1.profile["id"])
 
-        item_template_default_profile=default_profile.item_template()
+        item_template_default_profile = default_profile.item_template()
         item_template_copied_profile = copied_profile.item_template()
         self.assertEquals(item_template_default_profile._json, item_template_copied_profile._json)
         # "collectionId": "provide-your-collection-id-here",
@@ -317,13 +319,13 @@ class TestUseCases(SetUp):
                                      profile={'id': profile.id, 'method': 'reference'})
 
         if self.api.service_mode_private:
-            with self.assertRaises(ImejiError): # pragma: no cover
+            with self.assertRaises(ImejiError):  # pragma: no cover
                 profile.release()
         else:
             profile.release()
             self.assertEqual(self.api.profile(profile.id).status, 'RELEASED')
 
-        with self.assertRaises (ImejiError):
+        with self.assertRaises(ImejiError):
             profile.delete()
 
         collection.delete()
@@ -331,6 +333,6 @@ class TestUseCases(SetUp):
         if not self.api.service_mode_private:
             profile.discard("discard profile test pyimeji")
 
-if __name__ == '__main__': #pragma: no cover
-    unittest.main()
 
+if __name__ == '__main__':  # pragma: no cover
+    unittest.main()

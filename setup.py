@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import re
-import sys
 from setuptools import setup, find_packages
 
 
@@ -9,7 +7,7 @@ requires = [
     'docopt',
     'requests',
     'AppDirs',
-    'python-dateutil',
+    'python-dateutil', 'sphinx_rtd_theme',
 ]
 
 

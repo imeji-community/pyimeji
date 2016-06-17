@@ -16,6 +16,7 @@ class ImejiError(Exception):
         super(ImejiError, self).__init__(message)
         self.error = error.get('error') if isinstance(error, dict) else error
 
+
 class _GET(object):
     """Handles GET requests.
 
@@ -87,7 +88,7 @@ class Imeji(object):
             >>> item = api.item('item_id')
             >>> item.delete()
 
-        More usage examples you may find in the test sources at **./tests/** e.g. **test_usecases.py**, **test_api.py**
+        More usage examples you may find in the test sources at **./tests/** e.g. ** test_usecases.py**, **test_api.py**
     """
 
     def __init__(self, cfg=None, service_url=None, service_mode=None):
@@ -95,17 +96,18 @@ class Imeji(object):
 
         :param cfg: Configuration for the service
         :param service_url: The service URL
-        :param service_mode: set to "private" if imeji instance runs in "private" mode (any other value considered as standard imeji instance mode )
+        :param service_mode: set to "private" if imeji instance runs in "private" mode
+           (any other value considered as standard imeji instance mode )
 
         If the imeji instance is not available or does not run, the instantiation will throw an error message.
         """
         self.cfg = cfg or Config()
         self.service_url = service_url or self.cfg.get('service', 'url')
-        self.service_mode_private = False or ( self.cfg.get('service', 'mode')=='private' or service_mode=='private')
+        self.service_mode_private = False or (self.cfg.get('service', 'mode') == 'private' or service_mode == 'private')
         self.service_unavailable_message = \
-              "WARNING : The REST Interface of Imeji at {rest_service} is not available or there is another problem, " \
-              "check if the service is running under {imeji_service}"\
-                  .format(imeji_service=self.service_url, rest_service=self.service_url+'/rest')
+            "WARNING : The REST Interface of Imeji at {rest_service} is not available or there is another problem, " \
+            "check if the service is running under {imeji_service}" \
+                .format(imeji_service=self.service_url, rest_service=self.service_url + '/rest')
 
         # check if Imeji instance is running and notify the user
         try:
@@ -141,40 +143,44 @@ class Imeji(object):
                 can_params = {"size", "offset", "q"}
                 if not (can_params >= set(req_params.keys())):
                     raise ValueError("Wrong set of parameters in the request " + str(set(req_params) - set(can_params)))
-        #check if the instance has gone away in meantime
+        # check if the instance has gone away in meantime
         try:
             method = getattr(self.session, method.lower())
             res = method(self.service_url + '/rest' + path, **kw)
-        except Exception as e: # pragma: no cover
+        except Exception as e:
             raise ImejiError(self.service_unavailable_message, e)
 
         if assert_status:
-                if res.status_code != assert_status:  # pragma: no cover
-                    err_message = 'Unexpected HTTP status code: got HTTP %s, expected HTTP %s' % (res.status_code, assert_status)
-                    log.error(err_message)
-                    if hasattr(res, 'text'):
-                        log.error(res.text[:1000])
-                        try:
-                            res_json = res.json()
-                            if "error" in res_json and "exceptionReport" in res_json["error"] and "title" in res_json["error"]:
-                                err_message += "\nDetails from response: " + res_json["error"]["title"] + ". " + res_json["error"]["exceptionReport"]
-                        except:
-                            pass
-                        log.error(res)
-                    raise ImejiError(err_message, res)                    
+            if res.status_code != assert_status:  # pragma: no cover
+                err_message = 'Unexpected HTTP status code: got HTTP %s, expected HTTP %s' % (
+                    res.status_code, assert_status)
+                log.error(err_message)
+                if hasattr(res, 'text'):
+                    log.error(res.text[:1000])
+                    try:
+                        res_json = res.json()
+                        if "error" in res_json \
+                                and "exceptionReport" in res_json["error"] \
+                                and "title" in res_json["error"]:
+                            err_message += "\nDetails from response: " + res_json["error"]["title"] + ". " + \
+                                           res_json["error"]["exceptionReport"]
+                    except:
+                        pass
+                    log.error(res)
+                raise ImejiError(err_message, res)
 
         if json_res:
-                try:
-                    res = res.json()
-                    if "results" in res:
-                        self.total_number_of_results = res["totalNumberOfResults"]
-                        self.number_of_results = res["numberOfResults"]
-                        self.offset = res["offset"]
-                        self.size = res["size"]
-                        res = res["results"]
-                except ValueError:  # pragma: no cover
-                    log.error(res.text[:1000])
-                    pass
+            try:
+                res = res.json()
+                if "results" in res:
+                    self.total_number_of_results = res["totalNumberOfResults"]
+                    self.number_of_results = res["numberOfResults"]
+                    self.offset = res["offset"]
+                    self.size = res["size"]
+                    res = res["results"]
+            except ValueError:  # pragma: no cover
+                log.error(res.text[:1000])
+                pass
         return res
 
     def __getattr__(self, name):
