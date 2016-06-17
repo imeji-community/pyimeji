@@ -150,11 +150,19 @@ class Imeji(object):
 
         if assert_status:
                 if res.status_code != assert_status:  # pragma: no cover
-                    log.error(
-                       'got HTTP %s, expected HTTP %s' % (res.status_code, assert_status))
-                    log.error(res.text[:1000] if hasattr(res, 'text') else res)
-                    raise ImejiError( 'Got HTTP response code %s, expected HTTP response code %s'
-                                      % (res.status_code, assert_status) + "\n" +res.text[:1000] if hasattr(res, 'text') else res , res)
+                    err_message = 'Unexpected HTTP status code: got HTTP %s, expected HTTP %s' % (res.status_code, assert_status)
+                    log.error(err_message)
+                    if hasattr(res, 'text'):
+                        log.error(res.text[:1000])
+                        try:
+                            res_json = res.json()
+                            if "error" in res_json and "exceptionReport" in res_json["error"] and "title" in res_json["error"]:
+                                err_message += "\nDetails from response: " + res_json["error"]["title"] + ". " + res_json["error"]["exceptionReport"]
+                        except:
+                            pass
+                        log.error(res)
+                    raise ImejiError(err_message, res)                    
+
         if json_res:
                 try:
                     res = res.json()
