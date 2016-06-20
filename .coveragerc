@@ -1,0 +1,2 @@
+[report]
+omit = */tests/live_test_usecases.py
