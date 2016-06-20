@@ -103,7 +103,7 @@ class Imeji(object):
         """
         self.cfg = cfg or Config()
         self.service_url = service_url or self.cfg.get('service', 'url')
-        self.service_mode_private = False or (self.cfg.get('service', 'mode') == 'private' or service_mode == 'private')
+        self.service_mode_private = False or (self.cfg.get('service', 'mode', 'public') == 'private' or service_mode == 'private')
         self.service_unavailable_message = \
             "WARNING : The REST Interface of Imeji at {rest_service} is not available or there is another problem, " \
             "check if the service is running under {imeji_service}" \

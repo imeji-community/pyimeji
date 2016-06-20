@@ -17,7 +17,7 @@ class SetUp(unittest.TestCase):
         try:
             self.api = Imeji()
         except ImejiError:
-            self.fail(self, "No connection, no tests will be run")
+            self.skipTest(self, "No connection, no tests will be run")
 
     @classmethod
     def tearDownClass(self):  # pragma: no cover
