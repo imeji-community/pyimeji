@@ -88,7 +88,7 @@ class Imeji(object):
             >>> item = api.item('item_id')
             >>> item.delete()
 
-        More usage examples you may find in the test sources at **./tests/** e.g. ** test_usecases.py**, **test_api.py**
+        More usage examples you may find in the test sources at **./tests/** e.g. ** live_test_usecases.py**, **test_api.py**
     """
 
     def __init__(self, cfg=None, service_url=None, service_mode=None):

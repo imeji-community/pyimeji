@@ -14,7 +14,7 @@ SERVICE_URL = 'http://example.org'
 
 RESOURCES = {
     name: jsonload(pkg_path('tests', 'resources', '%s.json' % name))
-    for name in ['item', 'collection', 'album', 'profile', 'item_template_collection', 'item_template_profile']}
+    for name in ['item', 'collection', 'album', 'profile', 'item_template_collection', 'item_template_profile', 'collections']}
 
 
 class Response(object):
@@ -32,11 +32,13 @@ for path, method, status, content in [
     ('items/Wo1JI_oZNyrfxV_t', 'delete', 204, {}),
     ('items/Wo1JI_oZNyrfxV_t', 'get', 200, RESOURCES['item']),
     ('items/Wo1JI_oZNyrfxV_t', 'put', 200, RESOURCES['item']),
-    ('collections', 'get', 200, jsondumps([{"id": "FKMxUpYdV9N2J4XG"}])),
+    ('collections', 'get', 200, RESOURCES['collections']),
     ('collections', 'post', 201, RESOURCES['collection']),
+    ('collections/FKMxUpYdV9N2J4XG', 'put', 200, RESOURCES['collection']),
     ('collections/FKMxUpYdV9N2J4XG/release', 'put', 200, {}),
     ('collections/FKMxUpYdV9N2J4XG', 'delete', 204, {}),
     ('collections/FKMxUpYdV9N2J4XG', 'get', 200, RESOURCES['collection']),
+    ('collections/FKMxUpYdV9N2J4XG?q=Test&offset=0&size=1', 'get', 200, RESOURCES['collections']),
     ('collections/FKMxUpYdV9N2J4XG/items', 'get', 200, jsondumps([RESOURCES['item']])),
     ('collections/FKMxUpYdV9N2J4XG/items/template', 'get', 200, RESOURCES['item_template_collection']),
     ('profiles/dhV6XK39_UPrItK5', 'get', 200, RESOURCES['profile']),
@@ -81,6 +83,7 @@ class ApiTest(TestCase):
                 album.release()
                 album = self.api.album(album.id)
                 album.link(['Wo1JI_oZNyrfxV_t'])
+                album.unlink(['Wo1JI_oZNyrfxV_t'])
                 album.discard('test comment')
 
     def test_collection(self):
@@ -113,9 +116,23 @@ class ApiTest(TestCase):
                 profile=self.api.profile('dhV6XK39_UPrItK5'))
             assert collection3
 
+            collection.description='test description'
+            collection= collection.save()
+            assert collection
+
+            collections = self.api.collections(size=500, q='Test', offset=0)
+            self.assertEqual(self.api.total_number_of_results,1)
+            self.assertEqual(self.api.number_of_results,1)
+            self.assertEqual(self.api.offset,0)
+            self.assertEqual(self.api.size,1)
+
+            self.assertIn('FKMxUpYdV9N2J4XG', collections)
+            with self.assertRaises(ValueError):
+                self.api.collections(size=500, qquery='Test', offset=0)
+
     def test_item(self):
         with HTTMock(imeji):
-            self.api.create('item', _file=__file__)
+            self.api.create('item', _file=__file__, filename='name.png')
             items = self.api.items()
             self.assertIn('Wo1JI_oZNyrfxV_t', items)
             item = self.api.item(list(items.keys())[0])
@@ -129,6 +146,19 @@ class ApiTest(TestCase):
             self.api.update(item2, filename='name.png')
             item2.delete()
             self.api.delete(item)
+            collection = self.api.create(
+                'collection',
+                title='cde',
+                profile=self.api.profile('dhV6XK39_UPrItK5'))
+            item3= collection.add_item( _file=__file__)
+            self.assertEqual(item3.filename, 'virr-image.tif')
+            item3.filename='name.png'
+            item3.save()
+            self.assertEqual(item3.filename, 'name.png')
+            item3=self.api.update(item3, filename='virr-image.tif')
+            assert item3
+            with self.assertRaises(AttributeError):
+                item3=self.api.update(item3, metadata='some metadata')
 
     def test_profile(self):
         with HTTMock(imeji):
