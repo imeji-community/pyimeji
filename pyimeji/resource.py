@@ -148,6 +148,7 @@ class Album(_WithAuthor, _DiscardReleaseMixin):
     def members(self, **kw):
         """
             Lists all items which are members of the current album. Accepts q (fulltext query), size and offset parameters.
+            The default value of size is "20".
         """
         return OrderedDict(
             [(d['id'], d) for d in self._api._req(self._path('items'), params=kw)])
@@ -189,6 +190,7 @@ class Collection(_WithAuthor, _DiscardReleaseMixin):
     def items(self, **kw):
         """
           Lists all items within current collection. Accepts q (fulltext query), size and offset parameters.
+          The default value of size is "20".
         """
         return {
             d['id']: Item(d, self._api) for d in
