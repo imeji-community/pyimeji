@@ -73,7 +73,7 @@ class Imeji(object):
             >>> # Initiate the imeji API via pyimeji
             >>> api = Imeji(service_url='http://demo.imeji.org/imeji/')
             >>> # Get the id of the first collection from the list of first 100
-                # collections which contain "test" in their metadata
+            >>> # collections which contain "test" in their metadata
             >>> collection_id = list(api.collections(size=100, q="test").keys())[0]
             >>> # retrieve the collection with id='collection_id'
             >>> collection = api.collection('collection_id')
@@ -87,6 +87,12 @@ class Imeji(object):
             >>> # retrieve and delete an item
             >>> item = api.item('item_id')
             >>> item.delete()
+            >>>
+            >>> # to quickly get the total number of items in a collection or matching a query
+            >>> # set the size parameter to a value of 0
+            >>> items= api.collection('collection_id').items(size=0, q="test")
+            >>> print (api.total_number_of_results)
+            >>>
 
         More usage examples you may find in the test sources at **./tests/** e.g. ** live_test_usecases.py**, **test_api.py**
     """

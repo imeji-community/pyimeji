@@ -192,9 +192,11 @@ class Collection(_WithAuthor, _DiscardReleaseMixin):
           Lists all items within current collection. Accepts q (fulltext query), size and offset parameters.
           The default value of size is "20".
         """
-        return {
-            d['id']: Item(d, self._api) for d in
-            self._api._req(self._path('items'), params=kw)}
+        return OrderedDict(
+            [(d['id'], d) for d in self._api._req(self._path('items'), params=kw)])
+
+            # ['id']: Item(d, self._api) for d in
+            # self._api._req(self._path('items'), params=kw)}
 
     def add_item(self, **kw):
         """

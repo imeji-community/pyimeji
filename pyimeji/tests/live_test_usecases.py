@@ -2,6 +2,7 @@ from pyimeji.api import Imeji, ImejiError
 import os
 import unittest
 import logging
+from pyimeji.config import Config
 
 tag = "automated test pyimeji"
 testpath = os.path.dirname(os.path.abspath(__file__))
@@ -9,12 +10,14 @@ defaultFilename = '<change-the-file-name-here-or-provide' \
                   '-separate-field-for-fetch-or-reference-url-see-API-Documentation>'
 
 log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 
 class SetUp(unittest.TestCase):
     @classmethod
     def setUpClass(self):  # pragma: no cover
         try:
+            # Windows: self.api = Imeji(Config(config_dir='C:\\somedir\\PycharmProjects\\config_dir_pyimeji_my_test'))
             self.api = Imeji()
         except ImejiError:
             self.skipTest(self, "No connection to an imeji instance, no tests will be run")
