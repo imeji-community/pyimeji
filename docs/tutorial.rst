@@ -48,6 +48,13 @@ This file can be customized e.g. to provide connection info or to set the loggin
     If the imeji instance runs in private mode, set the value to ``private``. 
     If the imeji instance runs in public mode, you do not need to provide a value.
 
+.. note::
+    By default, pyimeji does not need any imeji instance to run the tests. If you wish to run the tests with the instance you have set-up, checkout the source code,
+    rename the file /tests/live_test_usecases.py to /tests/test_usecases.py and run the nosetests.
+    During running of these live tests, some data will be created and deleted in the instance you are testing.
+    Take a look at /tests/live_test_usecases.py if you are not sure what those tests do.
+
+
 A data curation workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~
 

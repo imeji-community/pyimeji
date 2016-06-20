@@ -1,0 +1,95 @@
+{
+  "totalNumberOfResults": 1,
+  "numberOfResults": 1,
+  "offset": 0,
+  "size": 1,
+  "results": [
+    {
+      "id": "FKMxUpYdV9N2J4XG",
+      "createdBy": {
+        "fullname": "Saquet",
+        "id": "zhcQKsMR0A9SiC6x"
+      },
+      "modifiedBy": {
+        "fullname": "admin",
+        "id": "w7ZfmmC5LQR8KJIN"
+      },
+      "createdDate": "2014-10-09T13:01:25 +0200",
+      "modifiedDate": "2014-11-19T14:50:21 +0100",
+      "versionDate": "2014-10-16T11:15:44 +0200",
+      "status": "RELEASED",
+      "version": 1,
+      "discardComment": "",
+      "title": "Research Data",
+      "description": "Test for research data",
+      "contributors": [
+        {
+          "position": 0,
+          "id": "Od6MTBSdXYPWYSU1",
+          "familyName": "Saquet",
+          "givenName": "Bastien",
+          "completeName": "Saquet, Bastien",
+          "alternativeName": "",
+          "role": "author",
+          "identifiers": [
+            {
+              "type": "imeji",
+              "value": "http://pubman.mpdl.mpg.de/cone/persons/resource/persons96343"
+            }
+          ],
+          "organizations": [
+            {
+              "position": 0,
+              "id": "94zMk2OtjJAWtXIH",
+              "name": "Innovations, MPDL, Max Planck Society",
+              "description": "",
+              "identifiers": [
+                {
+                  "type": "imeji",
+                  "value": "escidoc:persistent1"
+                }
+              ],
+              "city": "",
+              "country": ""
+            }
+          ]
+        },
+        {
+          "position": 0,
+          "id": "4S34HiEj6qvvgTV1",
+          "familyName": "Bulatovic",
+          "givenName": "Natasa",
+          "completeName": "Bulatovic, Natasa",
+          "alternativeName": "",
+          "role": "author",
+          "identifiers": [
+            {
+              "type": "imeji",
+              "value": "http://pubman.mpdl.mpg.de/cone/persons/resource/persons96308"
+            }
+          ],
+          "organizations": [
+            {
+              "position": 0,
+              "id": "OSCfm3llkE3Foa4",
+              "name": "Innovations, MPDL, Max Planck Society",
+              "description": "",
+              "identifiers": [
+                {
+                  "type": "imeji",
+                  "value": "escidoc:persistent1"
+                }
+              ],
+              "city": "",
+              "country": ""
+            }
+          ]
+        }
+      ],
+      "profile": {
+        "profileId": "dhV6XK39_UPrItK5",
+        "method": ""
+      }
+    }
+  ]
+}
