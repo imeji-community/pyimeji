@@ -20,7 +20,7 @@ def read(fname):
 
 setup(
     name='pyimeji',
-    version="1.2.2",
+    version="1.2.3",
     description='A python wrapper for the imeji API',
     long_description=read("README.rst"),
     author='Robert Forkel & Max Planck Digital Library (MPDL)',
