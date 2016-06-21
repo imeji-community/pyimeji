@@ -3,6 +3,7 @@ import os
 import unittest
 import logging
 from pyimeji.config import Config
+from appdirs import AppDirs
 
 tag = "automated test pyimeji"
 testpath = os.path.dirname(os.path.abspath(__file__))
@@ -10,17 +11,30 @@ defaultFilename = '<change-the-file-name-here-or-provide' \
                   '-separate-field-for-fetch-or-reference-url-see-API-Documentation>'
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
 
 
 class SetUp(unittest.TestCase):
     @classmethod
     def setUpClass(self):  # pragma: no cover
         try:
-            # Windows: self.api = Imeji(Config(config_dir='C:\\somedir\\PycharmProjects\\config_dir_pyimeji_my_test'))
-            self.api = Imeji()
+            # Windows:
+            strdir = "C:\\config_dir_pyimeji_my_test"
+            strfname = 'config-test.ini'
+            # Linux:
+            # strdir=/home/user/config_dir_pyimeji_my_test
+            my_config = Config(config_dir=strdir, config_file=strfname)
+            if 'notdefined' in my_config.get('service', 'url', 'notdefined'):
+                print("No special configuration file defined, will use the default one from folder " + AppDirs(
+                    'pyimeji').user_config_dir + " ( config.ini )")
+                my_config = Config(config_dir=AppDirs('pyimeji').user_config_dir)
+            else:
+                # log.info("Using special configuration from "+strdir+ " ( config.ini )")
+                print("Using special configuration file from folder " + strdir + " ( " + strfname + " )")
+            self.api = Imeji(my_config)
+            print("Running the tests at " + self.api.service_url + " in " + (
+            'PRIVATE' if self.api.service_mode_private else 'PUBLIC') + " mode.")
         except ImejiError:
-            self.skipTest(self, "No connection to an imeji instance, no tests will be run")
+            self.skipTest(self, "No connection to an imeji instance, no live instance tests will be run")
 
     @classmethod
     def tearDownClass(self):  # pragma: no cover
@@ -37,6 +51,12 @@ class SetUp(unittest.TestCase):
 
 
 class TestUseCases(SetUp):
+    """
+    You may run these tests when you have connection to a running imeji instance.
+    Otherwise, these tests will be skipped.
+    To run them
+    """
+
     def test_create_collection(self):
         collection = self.api.create('collection', title=tag)
         self.assertEqual(collection._json["title"], tag)

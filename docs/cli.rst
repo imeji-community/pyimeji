@@ -45,7 +45,7 @@ to ``stdout``:
 
 .. code-block:: javascript
 
-    imeji create collection 'title=PyImeji CLI Collection Test;description=Description of the PyImeji'
+    $ imeji create collection 'title=PyImeji CLI Collection Test;description=Description of the PyImeji'
     {
     "contributors": [
         {

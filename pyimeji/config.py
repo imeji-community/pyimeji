@@ -18,8 +18,8 @@ class Config(RawConfigParser):
     def __init__(self, **kw):
         config_dir = kw.pop('config_dir', None) or APP_DIRS.user_config_dir
         RawConfigParser.__init__(self, kw)
-
-        cfg_path = os.path.join(config_dir, 'config.ini')
+        config_file = kw.pop('config_file', 'config.ini')
+        cfg_path = os.path.join(config_dir, config_file)
         if os.path.exists(cfg_path):
             assert os.path.isfile(cfg_path)
             self.read(cfg_path)
