@@ -129,7 +129,7 @@ class Imeji(object):
         # initialize the request query
         self.total_number_of_results = self.number_of_results = self.offset = self.size = None
 
-    def _req(self, path, method='get', json_res=True, assert_status=200, **kw):
+    def _req(self, path, uri='', method='get', json_res=True, assert_status=200, **kw):
         """Make a request to the API of an imeji instance.
 
         :param path: HTTP path.
@@ -149,10 +149,16 @@ class Imeji(object):
                 can_params = {"size", "offset", "q"}
                 if not (can_params >= set(req_params.keys())):
                     raise ValueError("Wrong set of parameters in the request " + str(set(req_params) - set(can_params)))
+
+        # if a fileURI is available, this will be request
+        if not uri:
+            uri = self.service_url + '/rest' + path
+
         # check if the instance has gone away in meantime
         try:
             method = getattr(self.session, method.lower())
-            res = method(self.service_url + '/rest' + path, **kw)
+            ##res = method(self.service_url + '/rest' + path, **kw)
+            res = method(uri, **kw)
         except Exception as e:
             raise ImejiError(self.service_unavailable_message, e)
 
