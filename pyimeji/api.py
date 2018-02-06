@@ -176,6 +176,9 @@ class Imeji(object):
                                 and "title" in res_json["error"]:
                             err_message += "\nDetails from response: " + res_json["error"]["title"] + ". " + \
                                            res_json["error"]["exceptionReport"]
+                        if "error" in res_json \
+                                and "id" in res_json["error"]:
+                            err_message += "\nID from response: " + res_json["error"]["id"]
                     except:
                         pass
                     log.error(res)
