@@ -222,7 +222,7 @@ class Collection(_WithAuthor, _DiscardReleaseMixin):
 
     def save(self):
         """
-            Creates a new item or updates an existing collection, depending if "id" parameter is provided
+            Creates a new collection or updates an existing collection, depending if "id" parameter is provided
             in the JSON body of the request or not.
 
             :rtype: Collection
@@ -329,3 +329,13 @@ class Item(Resource):
             kw['files']['file'] = open(self._file, 'rb')
 
         return self.__class__(self._api._req(self._path(), **kw), self._api)
+
+    def download(self):
+        """
+            Downloads the file of the Item object and returns it.
+        """
+
+        return self._api._req(
+            self._path(''),
+            uri=self.fileUrl,
+            json_res=False)
